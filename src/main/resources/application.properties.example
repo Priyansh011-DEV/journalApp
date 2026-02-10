@@ -1,0 +1,3 @@
+spring.data.mongodb.uri=mongodb+srv://<username>:${MONGO_PASSWORD}@cluster0.mjrjkxs.mongodb.net/journalDB
+server.port=8080
+

@@ -1,6 +1,7 @@
 package net.PORC.journalApp.Controller;
 
 
+import jakarta.validation.Valid;
 import net.PORC.journalApp.Repository.JournalEntryRepo;
 import net.PORC.journalApp.entity.JournalEntry;
 import net.PORC.journalApp.entity.User;
@@ -12,11 +13,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/JournalV2")
+@RequestMapping("/Journal")
 public class controller_V2 {
 
     @Autowired
@@ -38,12 +40,11 @@ public class controller_V2 {
     }
 
     @PostMapping("/{username}")
-    public ResponseEntity<JournalEntry> CreateEntry(@RequestBody JournalEntry MyEntry, @PathVariable String username) {
-        try {
+    public ResponseEntity<JournalEntry> CreateEntry(@Valid @RequestBody JournalEntry MyEntry, @PathVariable String username) {
+        MyEntry.setDate(LocalDateTime.now());
+        {
             journalEntryService.SaveEntry(MyEntry, username);
-            return new ResponseEntity<>(MyEntry, HttpStatus.CREATED);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return ResponseEntity.status(HttpStatus.CREATED).body(MyEntry);
         }
     }
 
@@ -105,6 +106,11 @@ public class controller_V2 {
 
 
     }
+    @PostMapping("/debug")
+    public Object debug(@RequestBody Object body) {
+        return body;
+    }
+
 }
 
 

@@ -1,6 +1,8 @@
 package net.PORC.journalApp.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.validation.constraints.NotBlank;
 import jdk.jfr.SettingDefinition;
 import lombok.*;
 import org.bson.types.ObjectId;
@@ -16,8 +18,9 @@ import java.util.Date;
 public class JournalEntry {
     @Id
     private ObjectId id;
-    @NonNull
+    @NotBlank(message = "title is required")
     private String title;
     private String content;
+    @JsonIgnore
     private LocalDateTime date;
 }

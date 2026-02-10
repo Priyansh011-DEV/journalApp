@@ -1,5 +1,6 @@
 package net.PORC.journalApp.service;
 
+import net.PORC.journalApp.Exceptionhandler.UserNotFoundException;
 import net.PORC.journalApp.Repository.UserRepository;
 import net.PORC.journalApp.entity.User;
 import org.bson.types.ObjectId;
@@ -29,7 +30,8 @@ public class UserService {
     }
 
     public User FindByUsername(String username){
-        return userRepository.findByUsername(username);
+        return userRepository.findByUsername(username).orElseThrow(()-> new UserNotFoundException("user not found  "+ username));
     }
+
 
 }
