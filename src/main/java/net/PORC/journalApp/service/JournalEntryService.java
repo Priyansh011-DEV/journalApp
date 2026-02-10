@@ -6,6 +6,7 @@ import net.PORC.journalApp.entity.User;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -18,6 +19,7 @@ public class JournalEntryService {
     @Autowired
     private UserService userService;
 
+    @Transactional
     public void SaveEntry(JournalEntry journalEntry, String username) {
         User user = userService.FindByUsername(username);
         journalEntry.setDate(LocalDateTime.now());
