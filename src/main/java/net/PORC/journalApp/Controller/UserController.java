@@ -35,7 +35,7 @@ public class UserController {
 }
     @PostMapping
     public ResponseEntity<User> CreateUser(@RequestBody User user){
-        userservice.SaveEntry(user);
+        userservice.NewUser(user);
         return ResponseEntity.ok(user);
     }
     @PutMapping("/{username}")
