@@ -25,7 +25,7 @@ public class JournalEntryService {
         journalEntry.setDate(LocalDateTime.now());
         JournalEntry saved = journalEntryRepo.save(journalEntry);
         user.getJournalEntries().add(saved);
-        userService.SaveEntry(user);
+        userService.SaveUser(user);
     }
 
 
@@ -51,7 +51,7 @@ public class JournalEntryService {
         if(!removed){
             return false;
         }
-        userService.SaveEntry(user);
+        userService.SaveUser(user);
         journalEntryRepo.deleteById(id);
         return true;
     }
