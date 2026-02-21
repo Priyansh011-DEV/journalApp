@@ -27,7 +27,8 @@ public class SpringSecurity {
         http.csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth.requestMatchers("/Journal/**","/User/**")
-                        .authenticated().anyRequest().permitAll())
+                        .authenticated().requestMatchers("/admin/**").hasRole("ADMIN")
+                        .anyRequest().permitAll())
                 .httpBasic(Customizer.withDefaults());
         return http.build();
 
