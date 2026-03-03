@@ -24,14 +24,17 @@ public class SpringSecurity {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
         http.csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth.requestMatchers("/journal/**","/User/**")
-                        .authenticated().requestMatchers("/admin/**").hasRole("ADMIN")
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/docs/**","/api-docs/**").permitAll()
+                        .requestMatchers("/journal/**","/user/**").authenticated()
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().permitAll())
                 .httpBasic(Customizer.withDefaults());
-        return http.build();
 
+        return http.build();
     }
 
     @Bean
