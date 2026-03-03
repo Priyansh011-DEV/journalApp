@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/Journal")
+@RequestMapping("/journal")
 public class controller_V2 {
 
     @Autowired
