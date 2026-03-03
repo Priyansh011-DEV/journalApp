@@ -9,5 +9,10 @@ spring:
 
 server:
   port: ${PORT:8080}
-  servlet:
-    context-path: /Journal
+  #servlet:
+   # context-path: /Journal
+
+#logging:
+ # level:
+  #  root: DEBUG
+   # org.springdoc: DEBUG

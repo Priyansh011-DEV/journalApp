@@ -1,10 +1,9 @@
 package net.PORC.journalApp.entity;
 
 
-import lombok.Data;
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonAppend;
+import lombok.*;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -17,6 +16,8 @@ import java.util.List;
 
 @Document(collection = "users")
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class User{
     @Id
     ObjectId id;
@@ -27,6 +28,7 @@ public class User{
     private String password;
     private List<String> roles;
     @DBRef
+    @JsonIgnore
     private List<JournalEntry> journalEntries = new ArrayList<>();
 
 }

@@ -31,10 +31,13 @@ public class SpringSecurity {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         .requestMatchers("/journal/**", "/User/**")
                         .authenticated()
+
                         .requestMatchers("/admin/**")
                         .hasRole("ADMIN")
+
                         .anyRequest().permitAll()
                 )
                 .httpBasic(Customizer.withDefaults());
