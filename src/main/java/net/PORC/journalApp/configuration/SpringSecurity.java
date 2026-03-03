@@ -22,16 +22,36 @@ public class SpringSecurity {
     @Autowired
     private CustomUserImpl customUser;
 
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(csrf -> csrf.disable())
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth.requestMatchers("/journal/**","/User/**")
-                        .authenticated().requestMatchers("/admin/**").hasRole("ADMIN")
-                        .anyRequest().permitAll())
-                .httpBasic(Customizer.withDefaults());
-        return http.build();
 
+        http
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(auth -> auth
+
+                        // Swagger public
+                       // .requestMatchers(
+                          //      "/v3/api-docs/**",
+                       //         "/swagger-ui/**",
+                         //       "/swagger-ui.html"
+                        //).permitAll()
+
+                        // Public endpoints (if any)
+                        .requestMatchers("/public/**").permitAll()
+
+                        // Admin protected
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+
+                        // Journal & user must login
+                        .requestMatchers("/journal/**", "/user/**").authenticated()
+
+                        // Everything else must login
+                        .anyRequest().authenticated()
+                )
+                .httpBasic(Customizer.withDefaults());
+
+        return http.build();
     }
 
     @Bean
