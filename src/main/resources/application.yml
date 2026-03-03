@@ -13,5 +13,7 @@ server:
     context-path: /Journal
 
 springdoc:
+  api-docs:
+    path: /api-docs
   swagger-ui:
     path: /docs
