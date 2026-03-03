@@ -35,4 +35,6 @@ build/
 # secrets
 application.properties
 .env
+# Local Spring profile (contains secrets)
+src/main/resources/application-local.yml
 
