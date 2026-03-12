@@ -19,8 +19,9 @@ public class UserService {
     private UserRepository userRepository;
 
     private static final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-    public void SaveUser(User user){
-        userRepository.save(user);
+    public User SaveUser(User user){
+        return userRepository.save(user);
+
     }
     public List<User> getAll(){
         return userRepository.findAll();
