@@ -17,3 +17,8 @@ server:
  # level:
   #  root: DEBUG
    # org.springdoc: DEBUG
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
