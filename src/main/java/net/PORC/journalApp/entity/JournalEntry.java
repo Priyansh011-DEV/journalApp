@@ -17,7 +17,7 @@ import java.util.Date;
 @NoArgsConstructor
 public class JournalEntry {
     @Id
-    private ObjectId id;
+    private String id;
     @NotBlank(message = "title is required")
     private String title;
     private String content;

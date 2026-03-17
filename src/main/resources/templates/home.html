@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&family=Pacifico&display=swap" rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="/css/style2.css">
+</head>
+
+<body>
+
+<img src="/images/walk.png" class="anime-popup" />
+
+
+<!-- HEADER -->
+<header>
+    <h1>Weclome Back Traveller 😊</h1>
+
+    <div class="header-actions">
+        <button onclick="logout()">Logout</button>
+        <button onclick="deleteUser()" class="danger">Delete Account</button>
+
+        <a href="/RESET1">
+            <button>Reset Password</button>
+        </a>
+    </div>
+</header>
+
+<!-- MAIN -->
+<div class="container">
+
+    <!-- CREATE JOURNAL -->
+    <div class="card">
+        <h2>Create Journal Entry</h2>
+
+        <form id="journalForm" class="journal-form">
+            <input type="text" id="title" placeholder="Title" required />
+            <textarea id="content" placeholder="Write something..." required></textarea>
+            <button type="submit">Save Journal</button>
+        </form>
+    </div>
+
+    <!-- JOURNAL LIST -->
+    <div class="card">
+        <h2>Your Journals</h2>
+        <div id="journalList" class="journal-list"></div>
+    </div>
+
+</div>
+
+<footer>
+    <p>For queries: support.inc.japp@gmail.com</p>
+</footer>
+
+<script>
+
+    // 📥 LOAD JOURNALS
+        async function loadJournals() {
+            try {
+                const response = await fetch("/journal");
+
+                if (!response.ok) {
+                    console.error("Failed to load journals");
+                    return;
+                }
+
+                const data = await response.json();
+
+                const list = document.getElementById("journalList");
+                list.innerHTML = "";
+
+                data.forEach(journal => {
+
+                    // ✅ CLEAN ID (FINAL FIX)
+                    const id = journal.id;
+
+                    console.log("Journal:", journal);
+                    console.log("ID:", id);
+
+                    const div = document.createElement("div");
+                    div.classList.add("journal-card");
+
+                    div.innerHTML = `
+                        <div class="journal-content">
+                            <h3>${journal.title}</h3>
+                            <p>${journal.content}</p>
+                        </div>
+
+                        <div class="journal-actions">
+                            <button onclick="editJournal('${id}', \`${journal.title}\`, \`${journal.content}\`)">✏️</button>
+                            <button onclick="deleteJournal('${id}', this.closest('.journal-card'))">🗑️</button>
+                        </div>
+                    `;
+
+                    list.appendChild(div);
+                });
+
+            } catch (err) {
+                console.error("Error loading journals:", err);
+            }
+        }
+
+        // ➕ SAVE JOURNAL
+        document.getElementById("journalForm").addEventListener("submit", async function(e) {
+            e.preventDefault();
+
+            const title = document.getElementById("title").value;
+            const content = document.getElementById("content").value;
+
+            const response = await fetch("/journal", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ title, content })
+            });
+
+            if (response.ok) {
+                alert("Journal saved 🔥");
+                this.reset();
+                loadJournals();
+            } else {
+                alert("Error saving journal");
+            }
+        });
+
+        // ❌ DELETE JOURNAL
+        async function deleteJournal(id, element) {
+    console.log("Deleting:", id);
+
+    const res = await fetch(`/journal/DeleteByID/${id}`, {
+        method: "DELETE"
+    });
+
+    if (res.ok) {
+        console.log("Deleted successfully");
+
+        // 🔥 INSTANT REMOVE FROM UI
+        element.style.transition = "all 0.3s ease";
+        element.style.opacity = "0";
+        element.style.transform = "scale(0.9)";
+
+        setTimeout(() => {
+            element.remove();
+        }, 300);
+
+    } else {
+        console.error("Delete failed", res.status);
+        alert("Delete failed");
+    }
+}
+
+        // ✏️ EDIT JOURNAL
+        async function editJournal(id, oldTitle, oldContent) {
+            const newTitle = prompt("Edit title:", oldTitle);
+            const newContent = prompt("Edit content:", oldContent);
+
+            if (!newTitle || !newContent) return;
+
+            const res = await fetch(`/journal/update/${id}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    title: newTitle,
+                    content: newContent
+                })
+            });
+
+            if (res.ok) {
+                console.log("Updated successfully");
+                loadJournals();
+            } else {
+                console.error("Update failed", res.status);
+                alert("Update failed");
+            }
+        }
+
+        // 🔓 LOGOUT
+        function logout() {
+            window.location.href = "/logout";
+        }
+
+        // 💀 DELETE USER
+        async function deleteUser() {
+            const confirmDelete = confirm("Are you sure?");
+            if (!confirmDelete) return;
+
+            const res = await fetch("/Webuser", {
+                method: "DELETE"
+            });
+
+            if (res.ok) {
+                alert("Account deleted 💀");
+                window.location.href = "/login";
+            } else {
+                alert("Error deleting account");
+            }
+        }
+
+        // 🚀 INIT
+        loadJournals();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Register</title>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&family=Pacifico&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style1.css">
+</head>
+<body>
+<img src="/images/CNRL.png" class="anime-popup" />
+
+<header>
+    Create Your Account 😊
+</header>
+
+<div class="container">
+
+    <div class="card">
+        <h2>Register ✨</h2>
+
+        <form action="/customUser/register" method="post">
+
+            <!-- USERNAME -->
+            <div class="input-group">
+                <input type="text" name="username" required>
+                <label>Username</label>
+            </div>
+
+            <!-- EMAIL -->
+            <div class="input-group">
+                <input type="email" name="email" required>
+                <label>Email</label>
+            </div>
+
+            <!-- PASSWORD -->
+            <div class="input-group">
+                <input type="password" name="password" required>
+                <label>Password</label>
+            </div>
+
+            <button type="submit" onclick="this.innerText='Creating...'">
+                Register
+            </button>
+
+        </form>
+
+        <br>
+
+        <!-- LOGIN LINK -->
+        <div style="text-align:center;">
+            <p>Already have an account?</p>
+            <a href="/login">Login 🔐</a>
+        </div>
+
+    </div>
+
+</div>
+
+<footer>
+    <p>Join the Journal App • Secure & Private</p>
+</footer>
+
+</body>
+</html>

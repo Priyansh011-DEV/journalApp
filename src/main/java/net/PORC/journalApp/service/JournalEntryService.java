@@ -35,13 +35,13 @@ public class JournalEntryService {
     }
 
 
-    public Optional<JournalEntry> Find_byID(ObjectId id) {
+    public Optional<JournalEntry> Find_byID(String id) {
         return journalEntryRepo.findById(id);
 
     }
 
 
-    public boolean DeleteEntryByID(ObjectId id, String username) {
+    public boolean DeleteEntryByID(String id, String username) {
         User user = userService.FindByUsername(username);
         if( user == null){
             return false;
@@ -56,7 +56,7 @@ public class JournalEntryService {
         return true;
     }
 
-    public Optional<JournalEntry> FindByUserID(String username, ObjectId id) {
+    public Optional<JournalEntry> FindByUserID(String username, String id) {
         User user = userService.FindByUsername(username);
         if (user == null) {
             return Optional.empty();

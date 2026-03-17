@@ -4,8 +4,6 @@ spring:
       uri: ${MONGODB_URI}
       database: journalDB
       auto-index-creation: true
-  profiles:
-    active: dev
 
 
 server:

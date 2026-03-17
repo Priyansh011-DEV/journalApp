@@ -4,6 +4,7 @@ import net.PORC.journalApp.service.CustomUserImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -27,20 +28,27 @@ public class SpringSecurity {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http.csrf(csrf -> csrf.disable())
-                .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
+
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/login","/css/**","/js/**").permitAll()
+
+
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-                        .requestMatchers("/journal/**", "/User/**")
-                        .authenticated()
+                        .requestMatchers("/customUser/register", "/register", "/login", "/css/**").permitAll()
+
+                        .requestMatchers("/journal/**", "/User/**","/home/**").authenticated()
 
                         .requestMatchers("/admin/**")
                         .hasRole("ADMIN")
 
                         .anyRequest().permitAll()
                 )
-                .httpBasic(Customizer.withDefaults());
+                .formLogin(form->form.loginPage("/login").loginProcessingUrl("/login").defaultSuccessUrl("/home",true).failureUrl("/login?error=true").permitAll())
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/login?logout=true")
+                        .permitAll()
+                );
 
         return http.build();
     }
@@ -51,5 +59,7 @@ public class SpringSecurity {
     }
 
 }
+
+
 
 

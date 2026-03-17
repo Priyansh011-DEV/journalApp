@@ -17,11 +17,12 @@ import java.util.Optional;
 public class UserService {
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
-    private static final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
     public User SaveUser(User user){
         return userRepository.save(user);
-
     }
     public List<User> getAll(){
         return userRepository.findAll();
@@ -41,6 +42,15 @@ public class UserService {
        userRepository.save(user);
     }
     public void RegisterUser(User user){
+        // 🔐 CHECK EMAIL UNIQUE
+        if(userRepository.findByEmail(user.getEmail()) != null){
+            throw new RuntimeException("Email already exists");
+        }
+
+        // 🔐 CHECK USERNAME UNIQUE (also important)
+        if(userRepository.findByUsername(user.getUsername()).isPresent()){
+            throw new RuntimeException("Username already exists");
+        }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRoles(Arrays.asList("USER"));
         userRepository.save(user);

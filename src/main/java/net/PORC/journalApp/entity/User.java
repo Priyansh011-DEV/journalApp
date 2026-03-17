@@ -3,6 +3,8 @@ package net.PORC.journalApp.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonAppend;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
@@ -27,9 +29,17 @@ public class User{
     @NonNull
     private String password;
     private List<String> roles;
+
+    private String resetToken;
+    private LocalDateTime tokenExpiry;
+
     @DBRef
     @JsonIgnore
     private List<JournalEntry> journalEntries = new ArrayList<>();
+
+    @Email
+    @NotNull
+    private String email;
 
 }
 

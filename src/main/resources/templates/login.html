@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&family=Pacifico&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style1.css">
+</head>
+<body>
+<img src="/images/Ballon.png" class="anime-popup" />
+
+<header>
+    Welcome Back 🐰
+</header>
+
+<div class="container">
+
+    <div class="card">
+        <h2>Login 🔗</h2>
+
+        <form action="/login" method="post">
+
+            <!-- USERNAME -->
+            <div class="input-group">
+                <input type="text" name="username" required>
+                <label>Username</label>
+            </div>
+
+            <!-- PASSWORD -->
+            <div class="input-group">
+                <input type="password" name="password" required>
+                <label>Password</label>
+            </div>
+
+            <button type="submit">Login</button>
+
+        </form>
+
+        <br>
+
+        <!-- LINKS -->
+        <div style="text-align:center;">
+            <a href="/RESET1">Forgot Password?</a>
+            <br><br>
+            <a href="/register">Create Account</a>
+        </div>
+
+        <!-- ERROR MESSAGES -->
+        <p th:if="${param.error}" style="color:red; text-align:center; margin-top:10px;">
+            Invalid credentials ❌
+        </p>
+
+        <p th:if="${param.logout}" style="color:lightgreen; text-align:center; margin-top:10px;">
+            Logged out successfully ✅
+        </p>
+
+    </div>
+
+</div>
+
+<footer>
+    <p>Secure Login • Journal App</p>
+</footer>
+
+</body>
+</html>
