@@ -1,92 +1,185 @@
-📝 Multi-User Secure Journal Management Backend (Cloud Deployed)
+#  AI-Powered Journal App (Full-Stack | Cloud Deployed)
 
-A secure, production-ready REST API built using Spring Boot for managing multi-user journal entries. The system implements role-based access control (RBAC), user-level authorization, cloud database integration, containerized deployment, and interactive API documentation.
+A modern, full-stack journaling application with **secure multi-user support**, **AI-powered mood detection**, and a **responsive aesthetic UI**. Built using Spring Boot and deployed on cloud infrastructure, this project combines backend engineering with user-centric design.
 
-🚀 Live Demo
+---
 
-Swagger UI (Cloud Deployment):
+## 🚀 Live Demo
 
-🛠 Tech Stack
+🔗 Swagger UI: https://journalapp-ma29.onrender.com/swagger-ui/index.html
+🔗 Frontend: (Add your Render link here)
 
-Java
+---
 
-Spring Boot
+## ✨ Features
 
-Spring Security (RBAC + BCrypt)
+### 🔐 Authentication & Security
 
-Spring Data MongoDB
+* Role-Based Access Control (ADMIN / USER)
+* Secure login & registration system
+* BCrypt password hashing
+* Token-based password reset (email integration)
+* Strict user-level data isolation
 
-MongoDB Atlas (Cloud NoSQL Database)
+---
 
-Docker (Containerized Application)
+### ✍️ Journal System
 
-Render (Cloud Deployment)
+* Create, update, and delete journal entries
+* View latest entries with clean UI
+* Optimistic UI updates (instant delete without refresh)
+* Date-based journaling system
 
-Swagger / OpenAPI
+---
 
-Maven
+### 🧠 AI Integration (NEW 🚀)
 
-🔐 Security Features
+* AI-powered **mood detection** from journal text
+* Returns mood (Happy / Sad / Angry / Neutral)
+* Designed for future expansion (recommendations, insights)
 
-Role-Based Access Control (ADMIN / USER)
+---
 
-BCrypt password hashing
+### 🎨 Frontend UI
 
-Strict user-level data isolation (prevents cross-user access)
+* Fully responsive (mobile + desktop)
+* Soft aesthetic glassmorphism design
+* Calendar dashboard (Flatpickr integration)
+* Mood widget, clock, and music section
+* Clean 3-column layout (Dashboard / Controls / Journals)
 
-Secured endpoints using Spring Security
+---
 
-Centralized Global Exception Handling for consistent API responses
+### ☁️ Cloud & Deployment
 
-📌 Core Features
+* MongoDB Atlas (cloud database)
+* Docker containerization
+* Deployed on Render
+* Environment-based configuration (production-ready)
 
-User registration and authentication
+---
 
-Create, update, and delete journal entries
+## 🛠 Tech Stack
 
-Admin-restricted endpoints
+**Backend**
 
-Clean controller–service–repository layered architecture
+* Java
+* Spring Boot
+* Spring Security
+* Spring Data MongoDB
 
-Interactive API testing using Swagger
+**Frontend**
 
-Cloud-based MongoDB Atlas integration
+* HTML
+* CSS (Glassmorphism UI)
+* JavaScript (Vanilla)
 
-🐳 Deployment
+**Database**
 
-The application is containerized using Docker and deployed on Render with environment-based configuration.
+* MongoDB Atlas
 
-Production environment uses:
+**DevOps & Tools**
 
-MONGODB_URI as an environment variable for secure database connection.
+* Docker
+* Render (Cloud Deployment)
+* Swagger / OpenAPI
+* Maven
 
-▶ Running Locally
+**AI**
 
-Clone the repository
-git clone 
+* External AI API (OpenAI / Gemini)
 
-Navigate to the project folder
+---
+
+## 📂 Architecture
+
+Follows clean layered architecture:
+
+Controller → Service → Repository → Database
+
+Includes:
+
+* DTO-based design
+* Global exception handling
+* Validation & structured responses
+
+---
+
+## 🐳 Deployment Details
+
+* Containerized using Docker
+* Deployed on Render
+* Uses environment variables for:
+
+    * `MONGODB_URI`
+    * API keys (AI integration)
+
+---
+
+## ▶️ Running Locally
+
+```bash
+git clone https://github.com/your-username/journal-app.git
 cd journal-app
+```
 
-Configure MongoDB URI inside application-local.yml
+Configure:
 
-Run the application
+```yaml
+application-local.yml
+```
+
+Add your MongoDB URI.
+
+Run:
+
+```bash
 mvn spring-boot:run
+```
 
-Access Swagger documentation
+Access:
+
+```
 http://localhost:8080/swagger-ui/index.html
+```
 
-📂 Architecture
+---
 
-The project follows a clean layered architecture:
+## 📸 Screenshots (Add Tomorrow 📷)
 
-Controller → Service → Repository
+* Dashboard UI
+* Journal Entry Page
+* Mobile View
+* AI Mood Detection
 
-Includes centralized exception handling and proper separation of concerns for maintainability and scalability.
+---
 
-👤 Author
+## 💡 Future Improvements
 
-Priyansh Kumar Singh
-GitHub: https://github.com/Priyansh011-DEV
+* Mood analytics dashboard (charts)
+* AI-based recommendations (music, quotes)
+* “Talk to your journal” (chat with past entries)
+* Dark mode toggle
+* Mobile app version
 
-LinkedIn: https://www.linkedin.com/in/priyanshsingh01
+---
+
+## 👤 Author
+
+**Priyansh Kumar Singh**
+🔗 GitHub: https://github.com/Priyansh011-DEV
+🔗 LinkedIn: https://www.linkedin.com/in/priyanshsingh01
+
+---
+
+## ⭐ Final Note
+
+This project demonstrates:
+
+* Full-stack development
+* Secure backend engineering
+* Cloud deployment & DevOps
+* UI/UX design
+* AI integration
+
+Built as a portfolio project with real-world production practices.
