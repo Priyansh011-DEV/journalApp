@@ -32,3 +32,6 @@ management:
       exposure:
         include: health
 
+logging:
+  level:
+    org.springframework.boot.autoconfigure.mail: DEBUG
