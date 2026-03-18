@@ -25,7 +25,7 @@ public class UserService {
     private UserRepository userRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
-    @Autowired
+    @Autowired(required = false)
     private JavaMailSender mailSender;
     @Autowired
     private Environment env;
