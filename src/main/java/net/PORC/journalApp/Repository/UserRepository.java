@@ -14,6 +14,6 @@ Optional<User> findByUsername(String username);
 
 void deleteByUsername(String username);
 User findByResetToken(String token);
-User findByEmail(String email);
+Optional<User> findByEmail(String email);
 
 }

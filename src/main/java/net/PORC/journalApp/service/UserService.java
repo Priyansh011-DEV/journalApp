@@ -46,13 +46,19 @@ public class UserService {
        userRepository.save(user);
     }
     public void RegisterUser(User user){
-        // 🔍 NULL CHECK (VERY IMPORTANT)
-        if(user.getEmail() == null || user.getEmail().isEmpty()){
+        // 🔍 NULL CHECKS
+        if (user.getUsername() == null || user.getUsername().isEmpty()) {
+            throw new RuntimeException("Username is required");
+        }
+        if (user.getPassword() == null || user.getPassword().isEmpty()) {
+            throw new RuntimeException("Password is required");
+        }
+        if (user.getEmail() == null || user.getEmail().isEmpty()) {
             throw new RuntimeException("Email is required");
         }
 
-        // 🔐 CHECK EMAIL UNIQUE
-        if(userRepository.findByEmail(user.getEmail()) != null){
+        // 🔐 CHECK EMAIL UNIQUE (fixed — Optional now)
+        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
             throw new RuntimeException("Email already exists");
         }
 
@@ -69,9 +75,7 @@ public class UserService {
             message.setTo(user.getEmail());
             message.setSubject("Welcome 🎉");
             message.setText("Your account has been created successfully!");
-
             mailSender.send(message);
-
         } catch (Exception e) {
             System.out.println("Email failed: " + e.getMessage());
         }

@@ -24,9 +24,9 @@ public class User{
     @Id
     ObjectId id;
     @Indexed(unique = true)
-    @NonNull
+
     private String username;
-    @NonNull
+
     private String password;
     private List<String> roles;
 
