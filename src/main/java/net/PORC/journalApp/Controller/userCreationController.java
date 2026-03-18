@@ -18,11 +18,11 @@ public class userCreationController {
 
     @PostMapping("/register")
 
-    public String registerUser(User user) {
+    public String RegUser(User user) {
         System.out.println("USERNAME: " + user.getUsername());
         System.out.println("EMAIL: " + user.getEmail());
         System.out.println("PASSWORD: " + user.getPassword());
-        userService.RegisterUser(user);
+        userService.makeuser(user);
 
         return "redirect:/login";
     }

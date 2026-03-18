@@ -87,4 +87,8 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    public void makeuser(User user){
+        userRepository.save(user);
+    }
+
 }
