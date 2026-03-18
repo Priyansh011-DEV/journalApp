@@ -17,10 +17,10 @@ public class userCreationController {
     private UserService userService;
 
     @PostMapping("/register")
-    @ResponseBody
+
     public String registerUser(@RequestBody User user) {
         userService.RegisterUser(user);
-        return "user registered successfully";
+        return "redirect:/login";
     }
 
 }
