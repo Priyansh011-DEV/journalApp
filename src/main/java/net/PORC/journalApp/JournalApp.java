@@ -7,7 +7,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @SpringBootApplication
 @EnableTransactionManagement
-@EnableAsync
 public class JournalApp {
 
 	public static void main(String[] args) {

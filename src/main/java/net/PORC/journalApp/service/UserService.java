@@ -93,18 +93,30 @@ public class UserService {
 
     public void sendResetEmail(String toEmail, String username, String token) {
 
+        System.out.println("🔥 EMAIL METHOD CALLED for: " + toEmail);
+
         try {
             SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom("support.inc.japp@gmail.com");
+            message.setFrom("support.inc.japp@gmail.com"); // verified in Brevo
             message.setTo(toEmail);
             message.setSubject("Password Reset 🔐");
-            message.setText("Hello user " + username + ",\n\nYour token: " + token + "\n\nValid for 10 minutes.");
+            message.setText(
+                    "Hello " + username + ",\n\n" +
+                            "Your reset token is: " + token + "\n\n" +
+                            "This token is valid for 10 minutes.\n\n" +
+                            "If you didn’t request this, ignore this email."
+            );
+
             mailSender.send(message);
-            System.out.println("MAIL SENT SUCCESSFULLY");
+
+            System.out.println("✅ MAIL SENT SUCCESSFULLY");
+
         } catch (Exception e) {
+            System.out.println("❌ MAIL FAILED");
             e.printStackTrace();
         }
     }
+
 
 
 }
