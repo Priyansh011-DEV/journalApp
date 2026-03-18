@@ -70,7 +70,7 @@ public class UserService {
             message.setSubject("Welcome 🎉");
             message.setText("Your account has been created successfully!");
 
-            mailSender.send(message);
+           // mailSender.send(message);
 
         } catch (Exception e) {
             System.out.println("Email failed: " + e.getMessage());
