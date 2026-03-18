@@ -5,13 +5,9 @@ import net.PORC.journalApp.Repository.UserRepository;
 import net.PORC.journalApp.entity.User;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.scheduling.annotation.Async;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.core.env.Environment;
 import java.util.Arrays;
 
 
@@ -24,8 +20,6 @@ public class UserService {
     private UserRepository userRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
-    @Autowired(required = false)
-    private JavaMailSender mailSender;
 
 
     public User SaveUser(User user) {
@@ -89,34 +83,6 @@ public class UserService {
     public void makeuser(User user) {
         userRepository.save(user);
     }
-
-
-    public void sendResetEmail(String toEmail, String username, String token) {
-
-        System.out.println("🔥 EMAIL METHOD CALLED for: " + toEmail);
-
-        try {
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom("support.inc.japp@gmail.com"); // verified in Brevo
-            message.setTo(toEmail);
-            message.setSubject("Password Reset 🔐");
-            message.setText(
-                    "Hello " + username + ",\n\n" +
-                            "Your reset token is: " + token + "\n\n" +
-                            "This token is valid for 10 minutes.\n\n" +
-                            "If you didn’t request this, ignore this email."
-            );
-
-            mailSender.send(message);
-
-            System.out.println("✅ MAIL SENT SUCCESSFULLY");
-
-        } catch (Exception e) {
-            System.out.println("❌ MAIL FAILED");
-            e.printStackTrace();
-        }
-    }
-
 
 
 }

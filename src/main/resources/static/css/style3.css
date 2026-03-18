@@ -1,104 +1,147 @@
-/* 🌸 MAIN WRAPPER */
+/* 🌸 GLOBAL RESET */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* 🌸 BODY CENTERING */
+body {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/* 🌸 MAIN WRAPPER (RESPONSIVE SCALE) */
 .reset-container {
-    width: 520px;              /* wider */
-    margin: 40px auto;
-    padding: 30px;
+    width: 90%;
+    max-width: 620px;   /* bigger on desktop */
+
+    margin: 60px auto;
+    padding: 40px;
+
     border-radius: 30px;
 
-    background: rgba(255,255,255,0.5);
-    backdrop-filter: blur(15px);
+    background: rgba(255,255,255,0.55);
+    backdrop-filter: blur(18px);
 
-    box-shadow: 0 10px 40px rgba(255,182,193,0.2);
+    box-shadow: 0 15px 50px rgba(255,182,193,0.2);
 }
 
 /* 💎 SECTION CARD */
 .reset-card {
-    background: rgba(255,255,255,0.7);
-    padding: 30px;
+    background: rgba(255,255,255,0.75);
+
+    padding: 35px 40px; /* slightly bigger */
     margin-bottom: 25px;
 
     border-radius: 25px;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
 
-    transition: 0.3s;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+
+    transition: all 0.3s ease;
 }
 
-/* ✨ hover lift */
 .reset-card:hover {
-    transform: translateY(-5px);
+    transform: translateY(-6px);
 }
 
 /* 🎀 TITLES */
 .reset-card h3 {
     font-family: 'Pacifico', cursive;
     color: #FF8FAB;
+
     margin-bottom: 20px;
-    font-size: 22px;
+    font-size: 24px; /* slightly bigger */
 }
 
-/* 🧁 INPUTS (BIG + CLEAN) */
+/* 🧁 INPUTS */
 .reset-card input {
     width: 100%;
-    padding: 14px;
-    margin: 10px 0;
+    padding: 16px;
+    margin: 12px 0;
 
     border-radius: 14px;
     border: 1px solid #FFD6E0;
 
     background: #FFF;
-    font-size: 14px;
+    font-size: 15px;
+
+    outline: none;
+    transition: 0.25s ease;
+}
+
+.reset-card input:focus {
+    border-color: #FF8FAB;
+    box-shadow: 0 0 10px rgba(255,143,171,0.3);
 }
 
 /* 🍬 BUTTON */
 .reset-card button {
     width: 100%;
-    padding: 14px;
-    margin-top: 10px;
+    padding: 16px;
+    margin-top: 14px;
 
     border-radius: 18px;
     border: none;
 
     background: linear-gradient(90deg, #FFB3C6, #A0C4FF);
     color: white;
+
     font-weight: 600;
+    font-size: 15px;
 
     cursor: pointer;
-    transition: 0.3s;
+    transition: all 0.3s ease;
 }
 
 .reset-card button:hover {
     transform: scale(1.04);
+    box-shadow: 0 8px 20px rgba(160,196,255,0.4);
 }
 
 /* 💌 FOOT TEXT */
 .reset-footer {
     text-align: center;
     margin-top: 20px;
+
     font-size: 14px;
-    color: #888;
+    color: #777;
 }
 
 /* 💖 FEEDBACK BUTTON */
 .feedback-btn {
-    margin-top: 15px;
     width: 100%;
-    padding: 12px;
+    padding: 14px;
+    margin-top: 15px;
 
     border-radius: 18px;
     border: none;
 
     background: linear-gradient(90deg, #FFB3C6, #A0C4FF);
     color: white;
+
+    font-size: 15px;
     cursor: pointer;
+
+    transition: all 0.3s ease;
 }
-/* 🐰 ANIME (FIXED POSITION + CLEAN) */
+
+.feedback-btn:hover {
+    transform: scale(1.04);
+    box-shadow: 0 0 20px rgba(160,196,255,0.6);
+}
+
+/* 🐰 ANIME IMAGE */
 .anime-popup {
     position: fixed;
 
-    bottom: 100px;
-    right: 320px;
+    bottom: 60px;
+    right: 8%;
 
-    width: 500px;
+    width: 380px;
 
     animation: floaty 3s ease-in-out infinite;
 }
@@ -110,11 +153,38 @@
     100% { transform: translateY(0px); }
 }
 
-/* HOVER */
 .anime-popup:hover {
-    transform: scale(1.1) rotate(3deg);
+    transform: scale(1.08) rotate(2deg);
 }
-.feedback-btn:hover {
-    transform: scale(1.04);
-    box-shadow: 0 0 20px rgba(160,196,255,0.6);
+
+/* 📱 MOBILE RESPONSIVE */
+@media (max-width: 768px) {
+
+    .reset-container {
+        padding: 25px;
+        margin: 30px auto;
+    }
+
+    .reset-card {
+        padding: 25px;
+    }
+
+    .reset-card h3 {
+        font-size: 20px;
+    }
+
+    .reset-card input {
+        padding: 14px;
+        font-size: 14px;
+    }
+
+    .reset-card button {
+        padding: 14px;
+        font-size: 14px;
+    }
+
+    /* hide anime on small screens (clean look) */
+    .anime-popup {
+        display: none;
+    }
 }

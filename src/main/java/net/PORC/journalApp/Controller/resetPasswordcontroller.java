@@ -2,7 +2,9 @@ package net.PORC.journalApp.Controller;
 
 
 import net.PORC.journalApp.Repository.UserRepository;
+import net.PORC.journalApp.entity.PasswordResetToken;
 import net.PORC.journalApp.entity.User;
+import net.PORC.journalApp.service.PasswordResetService;
 import net.PORC.journalApp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -26,32 +28,33 @@ public class resetPasswordcontroller {
     private UserService userService;
     @Autowired
     private PasswordEncoder passwordEncoder;
-
+    @Autowired
+    private PasswordResetService passwordResetService;
 
 
     @PostMapping("/Forgot")
     public ResponseEntity<?> forgotPassword(@RequestBody User user) {
-
         Optional<User> userOptional = userRepository.findByUsername(user.getUsername());
 
-        // 🔐 SECURITY: don't reveal if user exists
+// 🔒 Do NOT reveal if user exists
         if (userOptional.isEmpty()) {
-            return ResponseEntity.ok("If account exists, token sent to email 📧");
+            return ResponseEntity.ok("Gmail do not exist");
         }
 
         User existingUser = userOptional.get();
 
-        String token = UUID.randomUUID().toString();
+// 🔥 EMAIL VALIDATION
+        if (user.getEmail() == null ||
+                !existingUser.getEmail().equals(user.getEmail())) {
 
-        existingUser.setResetToken(token);
-        existingUser.setTokenExpiry(LocalDateTime.now().plusMinutes(10));
+            return ResponseEntity.ok("If account exists with gmail , token generated");
+        }
 
-        userRepository.save(existingUser);
+// 🔥 create + save token
+        PasswordResetToken token = passwordResetService.createAndSaveToken(existingUser.getEmail());
 
-        // 📧 SEND EMAIL
-        // 📧 SEND EMAIL ASYNC
-        userService.sendResetEmail(existingUser.getEmail(), existingUser.getUsername(), token);
-        return ResponseEntity.ok("if account exist token sent to mail");
+// 🔥 return token (for your no-email system)
+        return ResponseEntity.ok(token.getToken());
     }
 
 
@@ -60,23 +63,25 @@ public class resetPasswordcontroller {
             @RequestParam String token,
             @RequestBody User user) {
 
-        User existingUser = userRepository.findByResetToken(token);
+        // 🔒 validate + get token
+        PasswordResetToken prt = passwordResetService.validateToken(token);
 
-        if (existingUser == null) {
-            return ResponseEntity.badRequest().body("Invalid token");
+// 🔍 get user from token email
+        Optional<User> userOptional = userRepository.findByEmail(prt.getEmail());
+
+        if (userOptional.isEmpty()) {
+            return ResponseEntity.badRequest().body("User not found");
         }
 
-        if (existingUser.getTokenExpiry().isBefore(LocalDateTime.now())) {
-            return ResponseEntity.badRequest().body("Token expired");
-        }
+        User existingUser = userOptional.get();
 
+// 🔐 update password
         existingUser.setPassword(passwordEncoder.encode(user.getPassword()));
-
-
-        existingUser.setResetToken(null);
-        existingUser.setTokenExpiry(null);
-
         userRepository.save(existingUser);
+
+// 🔥 mark token used (reuse object instead of re-fetch)
+        prt.setUsed(true);
+        passwordResetService.save(prt); // we'll add this method
 
         return ResponseEntity.ok("Password reset successful 🔥");
     }
