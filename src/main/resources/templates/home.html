@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
 
     <!-- Fonts -->
@@ -8,12 +9,15 @@
 
     <!-- CSS -->
     <link rel="stylesheet" href="/css/style2.css">
+
+    <!-- 📅 Calendar CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
 </head>
 
 <body>
 
 <img src="/images/walk.png" class="anime-popup" />
-
 
 <!-- HEADER -->
 <header>
@@ -32,178 +36,189 @@
 <!-- MAIN -->
 <div class="container">
 
-    <!-- CREATE JOURNAL -->
-    <div class="card">
-        <h2>Create Journal Entry</h2>
-
-        <form id="journalForm" class="journal-form">
-            <input type="text" id="title" placeholder="Title" required />
-            <textarea id="content" placeholder="Write something..." required></textarea>
-            <button type="submit">Save Journal</button>
-        </form>
+    <!-- LEFT -->
+    <div class="left">
+        <div class="card">
+            <h2>📊 Dashboard</h2>
+            <p id="todayDate">Today: 19 March 2026</p>
+            <div id="calendar"></div>
+            <img src="/images/cnrollcalen.png" class="calendar-img" />
+        </div>
     </div>
 
-    <!-- JOURNAL LIST -->
-    <div class="card">
-        <h2>Your Journals</h2>
-        <div id="journalList" class="journal-list"></div>
+    <!-- MIDDLE -->
+    <div class="middle">
+
+        <!-- 😊 MOOD -->
+        <div class="card small-card">
+            <h3>😊 Mood Today</h3>
+            <p id="moodText">Feeling calm 🌸</p>
+        </div>
+
+        <!-- ⏰ CLOCK -->
+        <div class="card small-card">
+            <h3>⏰ Time</h3>
+            <p id="clock"></p>
+        </div>
+
+        <!-- 🎧 MUSIC -->
+        <div class="card small-card">
+            <h3>🎧 Chill Music</h3>
+
+            <select id="musicSelect">
+                <option value="/music/song1.mp3">music 1</option>
+                <option value="/music/song2.mp3">music 2</option>
+                <option value="/music/song3.mp3">music 3</option>
+                <option value="/music/song4.mp3">music 4</option>
+                <option value="/music/song5.mp3">music 5</option>
+                <option value="/music/song6.mp3">music 6</option>
+                <option value="/music/song7.mp3">music 7</option>
+            </select>
+
+            <button onclick="toggleMusic()">Play / Pause</button>
+            <audio id="audioPlayer" loop></audio>
+        </div>
+
+    </div>
+
+    <!-- RIGHT -->
+    <div class="right">
+
+        <!-- CREATE JOURNAL -->
+        <div class="card">
+            <h2>Create Journal Entry</h2>
+
+            <form id="journalForm" class="journal-form">
+                <input type="text" id="title" placeholder="Title" required />
+                <textarea id="content" placeholder="Write something..." required></textarea>
+                <button type="submit">Save Journal</button>
+            </form>
+        </div>
+
+        <!-- JOURNAL LIST -->
+        <div class="card">
+            <h2>Your Journals</h2>
+            <div id="journalList" class="journal-list"></div>
+        </div>
+
     </div>
 
 </div>
 
-<footer>
-    <p>For queries: support.inc.japp@gmail.com</p>
-</footer>
+
+
+<!-- 📅 Calendar JS -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 <script>
 
-    // 📥 LOAD JOURNALS
-        async function loadJournals() {
-            try {
-                const response = await fetch("/journal");
-
-                if (!response.ok) {
-                    console.error("Failed to load journals");
-                    return;
-                }
-
-                const data = await response.json();
-
-                const list = document.getElementById("journalList");
-                list.innerHTML = "";
-
-                data.forEach(journal => {
-
-                    // ✅ CLEAN ID (FINAL FIX)
-                    const id = journal.id;
-
-                    console.log("Journal:", journal);
-                    console.log("ID:", id);
-
-                    const div = document.createElement("div");
-                    div.classList.add("journal-card");
-
-                    div.innerHTML = `
-                        <div class="journal-content">
-                            <h3>${journal.title}</h3>
-                            <p>${journal.content}</p>
-                        </div>
-
-                        <div class="journal-actions">
-                            <button onclick="editJournal('${id}', \`${journal.title}\`, \`${journal.content}\`)">✏️</button>
-                            <button onclick="deleteJournal('${id}', this.closest('.journal-card'))">🗑️</button>
-                        </div>
-                    `;
-
-                    list.appendChild(div);
-                });
-
-            } catch (err) {
-                console.error("Error loading journals:", err);
-            }
-        }
-
-        // ➕ SAVE JOURNAL
-        document.getElementById("journalForm").addEventListener("submit", async function(e) {
-            e.preventDefault();
-
-            const title = document.getElementById("title").value;
-            const content = document.getElementById("content").value;
-
-            const response = await fetch("/journal", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ title, content })
-            });
-
-            if (response.ok) {
-                alert("Journal saved 🔥");
-                this.reset();
-                loadJournals();
-            } else {
-                alert("Error saving journal");
-            }
-        });
-
-        // ❌ DELETE JOURNAL
-        async function deleteJournal(id, element) {
-    console.log("Deleting:", id);
-
-    const res = await fetch(`/journal/DeleteByID/${id}`, {
-        method: "DELETE"
+    // 📅 CALENDAR
+    flatpickr("#calendar", {
+        inline: true,
+        defaultDate: "today"
     });
 
-    if (res.ok) {
-        console.log("Deleted successfully");
+    // 🎧 MUSIC
+    const player = document.getElementById("audioPlayer");
+    const select = document.getElementById("musicSelect");
 
-        // 🔥 INSTANT REMOVE FROM UI
-        element.style.transition = "all 0.3s ease";
-        element.style.opacity = "0";
-        element.style.transform = "scale(0.9)";
+    select.addEventListener("change", () => {
+        player.src = select.value;
+        player.play();
+    });
 
-        setTimeout(() => {
-            element.remove();
-        }, 300);
-
-    } else {
-        console.error("Delete failed", res.status);
-        alert("Delete failed");
+    function toggleMusic() {
+        if (player.paused) player.play();
+        else player.pause();
     }
-}
 
-        // ✏️ EDIT JOURNAL
-        async function editJournal(id, oldTitle, oldContent) {
-            const newTitle = prompt("Edit title:", oldTitle);
-            const newContent = prompt("Edit content:", oldContent);
+    // ⏰ CLOCK
+    function updateClock() {
+        const now = new Date();
+        document.getElementById("clock").innerText = now.toLocaleTimeString();
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
 
-            if (!newTitle || !newContent) return;
+    // 📥 LOAD JOURNALS
+    async function loadJournals() {
+        const res = await fetch("/journal");
+        const data = await res.json();
 
-            const res = await fetch(`/journal/update/${id}`, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    title: newTitle,
-                    content: newContent
-                })
-            });
+        const list = document.getElementById("journalList");
+        list.innerHTML = "";
 
-            if (res.ok) {
-                console.log("Updated successfully");
-                loadJournals();
-            } else {
-                console.error("Update failed", res.status);
-                alert("Update failed");
-            }
-        }
+        data.forEach(journal => {
+            const div = document.createElement("div");
+            div.classList.add("journal-card");
 
-        // 🔓 LOGOUT
-        function logout() {
-            window.location.href = "/logout";
-        }
+            div.innerHTML = `
+                <div class="journal-content">
+                    <h3>${journal.title}</h3>
+                    <p>${journal.content}</p>
+                </div>
 
-        // 💀 DELETE USER
-        async function deleteUser() {
-            const confirmDelete = confirm("Are you sure?");
-            if (!confirmDelete) return;
+                <div class="journal-actions">
+                    <button onclick="editJournal('${journal.id}', \`${journal.title}\`, \`${journal.content}\`)">✏️</button>
+                    <button onclick="deleteJournal('${journal.id}', this.closest('.journal-card'))">🗑️</button>
+                </div>
+            `;
 
-            const res = await fetch("/Webuser", {
-                method: "DELETE"
-            });
+            list.appendChild(div);
+        });
+    }
 
-            if (res.ok) {
-                alert("Account deleted 💀");
-                window.location.href = "/login";
-            } else {
-                alert("Error deleting account");
-            }
-        }
+    // SAVE
+    document.getElementById("journalForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
 
-        // 🚀 INIT
+        const title = title.value;
+        const content = content.value;
+
+        await fetch("/journal", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ title, content })
+        });
+
         loadJournals();
+    });
+
+    // DELETE
+    async function deleteJournal(id, el) {
+        await fetch(`/journal/DeleteByID/${id}`, { method: "DELETE" });
+        el.remove();
+    }
+
+    // EDIT
+    async function editJournal(id, oldTitle, oldContent) {
+        const newTitle = prompt("Edit title:", oldTitle);
+        const newContent = prompt("Edit content:", oldContent);
+
+        if (!newTitle || !newContent) return;
+
+        await fetch(`/journal/update/${id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ title: newTitle, content: newContent })
+        });
+
+        loadJournals();
+    }
+
+    function logout() {
+        window.location.href = "/logout";
+    }
+
+    async function deleteUser() {
+        if (!confirm("Are you sure?")) return;
+
+        await fetch("/Webuser", { method: "DELETE" });
+        window.location.href = "/login";
+    }
+
+    loadJournals();
+
 </script>
 
 </body>
