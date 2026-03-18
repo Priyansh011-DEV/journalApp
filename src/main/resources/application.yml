@@ -5,18 +5,17 @@ spring:
       database: journalDB
       auto-index-creation: true
   mail:
-    host: smtp.gmail.com
+    host: smtp-relay.brevo.com
     port: 587
-    username: ${MAIL_USERNAME}
-    password: ${MAIL_PASSWORD}
+    username: ${BREVO_USERNAME}
+    password: ${BREVO_PASSWORD}
     properties:
       mail:
         smtp:
           auth: true
           starttls:
             enable: true
-          ssl:
-            trust: smtp.gmail.com
+
 
 server:
   port: ${PORT:8080}

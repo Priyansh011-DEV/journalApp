@@ -31,27 +31,32 @@ public class UserService {
     private Environment env;
 
 
-    public User SaveUser(User user){
+    public User SaveUser(User user) {
         return userRepository.save(user);
     }
-    public List<User> getAll(){
+
+    public List<User> getAll() {
         return userRepository.findAll();
     }
-    public Optional<User> Find_byID(ObjectId id){
+
+    public Optional<User> Find_byID(ObjectId id) {
         return userRepository.findById(id);
     }
-    public void DeleteEntryByID(ObjectId id){
+
+    public void DeleteEntryByID(ObjectId id) {
         userRepository.deleteById(id);
     }
 
-    public User FindByUsername(String username){
-        return userRepository.findByUsername(username).orElseThrow(()-> new UserNotFoundException("user not found  "+ username));
+    public User FindByUsername(String username) {
+        return userRepository.findByUsername(username).orElseThrow(() -> new UserNotFoundException("user not found  " + username));
     }
-    public void UpdateUser(User user){
-       user.setPassword(passwordEncoder.encode(user.getPassword()));
-       userRepository.save(user);
+
+    public void UpdateUser(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        userRepository.save(user);
     }
-    public void RegisterUser(User user){
+
+    public void RegisterUser(User user) {
         // 🔍 NULL CHECKS
         if (user.getUsername() == null || user.getUsername().isEmpty()) {
             throw new RuntimeException("Username is required");
@@ -76,43 +81,31 @@ public class UserService {
         userRepository.save(user);
 
 
-
     }
+
     public User createAdmin(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRoles(List.of("ADMIN"));
         return userRepository.save(user);
     }
 
-    public void makeuser(User user){
+    public void makeuser(User user) {
         userRepository.save(user);
     }
 
     @Async
     public void sendResetEmail(String toEmail, String username, String token) {
+
         try {
-            if (Arrays.asList(env.getActiveProfiles()).contains("prod")) {
-                // RESEND
-                Resend resend = new Resend(System.getenv("RESEND_API_KEY"));
-                CreateEmailOptions params = CreateEmailOptions.builder()
-                        .from("onboarding@resend.dev")
-                        .to(toEmail)
-                        .subject("Password Reset 🔐")
-                        .html("<p>Hello " + username + ",</p>" +
-                                "<p>Your token: <strong>" + token + "</strong></p>" +
-                                "<p>Valid for 10 minutes.</p>")
-                        .build();
-                resend.emails().send(params);
-            } else {
-                // GMAIL (local)
-                SimpleMailMessage message = new SimpleMailMessage();
-                message.setTo(toEmail);
-                message.setSubject("Password Reset 🔐");
-                message.setText("Hello " + username + ",\n\nYour token: " + token + "\n\nValid for 10 minutes.");
-                mailSender.send(message);
-            }
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setTo(toEmail);
+            message.setSubject("Password Reset 🔐");
+            message.setText("Hello " + username + ",\n\nYour token: " + token + "\n\nValid for 10 minutes.");
+            mailSender.send(message);
         } catch (Throwable t) {
             System.out.println("Reset email failed: " + t.getMessage());
         }
     }
+
+
 }
