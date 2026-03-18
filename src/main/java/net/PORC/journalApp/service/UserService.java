@@ -1,6 +1,5 @@
 package net.PORC.journalApp.service;
-import com.resend.Resend;
-import com.resend.services.emails.model.CreateEmailOptions;
+
 import net.PORC.journalApp.Exceptionhandler.UserNotFoundException;
 import net.PORC.journalApp.Repository.UserRepository;
 import net.PORC.journalApp.entity.User;
@@ -9,13 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.core.env.Environment;
 import java.util.Arrays;
 
-import java.util.Arrays;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -27,8 +26,6 @@ public class UserService {
     private PasswordEncoder passwordEncoder;
     @Autowired(required = false)
     private JavaMailSender mailSender;
-    @Autowired
-    private Environment env;
 
 
     public User SaveUser(User user) {
