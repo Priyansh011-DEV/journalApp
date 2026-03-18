@@ -143,6 +143,10 @@
     // 📥 LOAD JOURNALS
     async function loadJournals() {
         const res = await fetch("/journal");
+         if (!res.ok) {
+        console.error("Failed to load journals");
+        return;
+    }
         const data = await res.json();
 
         const list = document.getElementById("journalList");
@@ -172,8 +176,8 @@
     document.getElementById("journalForm").addEventListener("submit", async (e) => {
         e.preventDefault();
 
-        const title = title.value;
-        const content = content.value;
+        const title = document.getElementById("title").value;
+        const content = document.getElementById("content").value;
 
         await fetch("/journal", {
             method: "POST",
