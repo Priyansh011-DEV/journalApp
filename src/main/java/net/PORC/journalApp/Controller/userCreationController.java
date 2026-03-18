@@ -18,7 +18,7 @@ public class userCreationController {
 
     @PostMapping("/register")
 
-    public String registerUser(@RequestBody User user) {
+    public String registerUser(User user) {
         userService.RegisterUser(user);
         return "redirect:/login";
     }
