@@ -70,7 +70,7 @@ public class UserService {
         // 💾 SAVE USER
         userRepository.save(user);
 
-        // 📩 SEND EMAIL (SAFE)
+
 
     }
     public User createAdmin(User user) {
