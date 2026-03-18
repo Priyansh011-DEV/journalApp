@@ -5,6 +5,8 @@ import net.PORC.journalApp.Repository.UserRepository;
 import net.PORC.journalApp.entity.User;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,8 @@ public class UserService {
     private UserRepository userRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Autowired
+    private JavaMailSender mailSender;
 
 
     public User SaveUser(User user){
@@ -42,18 +46,35 @@ public class UserService {
        userRepository.save(user);
     }
     public void RegisterUser(User user){
+        // 🔍 NULL CHECK (VERY IMPORTANT)
+        if(user.getEmail() == null || user.getEmail().isEmpty()){
+            throw new RuntimeException("Email is required");
+        }
+
         // 🔐 CHECK EMAIL UNIQUE
         if(userRepository.findByEmail(user.getEmail()) != null){
             throw new RuntimeException("Email already exists");
         }
 
-        // 🔐 CHECK USERNAME UNIQUE (also important)
-        if(userRepository.findByUsername(user.getUsername()).isPresent()){
-            throw new RuntimeException("Username already exists");
-        }
+        // 🔐 ENCODE PASSWORD
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRoles(Arrays.asList("USER"));
+
+        // 💾 SAVE USER
         userRepository.save(user);
+
+        // 📩 SEND EMAIL (SAFE)
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setTo(user.getEmail());
+            message.setSubject("Welcome 🎉");
+            message.setText("Your account has been created successfully!");
+
+            mailSender.send(message);
+
+        } catch (Exception e) {
+            System.out.println("Email failed: " + e.getMessage());
+        }
 
     }
     public User createAdmin(User user) {
