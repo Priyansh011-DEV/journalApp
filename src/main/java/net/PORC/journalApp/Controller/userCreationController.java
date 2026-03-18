@@ -22,7 +22,7 @@ public class userCreationController {
         System.out.println("USERNAME: " + user.getUsername());
         System.out.println("EMAIL: " + user.getEmail());
         System.out.println("PASSWORD: " + user.getPassword());
-        userService.makeuser(user);
+        userService.RegisterUser(user);
 
         return "redirect:/login";
     }
