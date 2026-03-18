@@ -90,17 +90,19 @@ public class UserService {
         userRepository.save(user);
     }
 
-    @Async
+
     public void sendResetEmail(String toEmail, String username, String token) {
 
         try {
             SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom("support.inc.japp@gmail.com");
             message.setTo(toEmail);
             message.setSubject("Password Reset 🔐");
-            message.setText("Hello " + username + ",\n\nYour token: " + token + "\n\nValid for 10 minutes.");
+            message.setText("Hello user " + username + ",\n\nYour token: " + token + "\n\nValid for 10 minutes.");
             mailSender.send(message);
-        } catch (Throwable t) {
-            System.out.println("Reset email failed: " + t.getMessage());
+            System.out.println("MAIL SENT SUCCESSFULLY");
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
