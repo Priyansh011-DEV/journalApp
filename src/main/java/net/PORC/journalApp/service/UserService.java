@@ -1,5 +1,6 @@
 package net.PORC.journalApp.service;
-
+import com.resend.Resend;
+import com.resend.services.emails.model.CreateEmailOptions;
 import net.PORC.journalApp.Exceptionhandler.UserNotFoundException;
 import net.PORC.journalApp.Repository.UserRepository;
 import net.PORC.journalApp.entity.User;
@@ -22,8 +23,7 @@ public class UserService {
     private UserRepository userRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
-    @Autowired
-    private JavaMailSender mailSender;
+
 
 
     public User SaveUser(User user){
@@ -86,17 +86,16 @@ public class UserService {
     @Async
     public void sendResetEmail(String toEmail, String username, String token) {
         try {
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setTo(toEmail);
-            message.setSubject("Password Reset Request 🔐");
-            message.setText(
-                    "Hello " + username + ",\n\n" +
-                            "Your password reset token is:\n\n" +
-                            token +
-                            "\n\nThis token is valid for 10 minutes.\n\n" +
-                            "If you did not request this, ignore this email."
-            );
-            mailSender.send(message);
+            Resend resend = new Resend(System.getenv("re_61BQZND6_PgvbVtDWFcVZrCGLaRARERgc"));
+            CreateEmailOptions params = CreateEmailOptions.builder()
+                    .from("onboarding@resend.dev")
+                    .to(toEmail)
+                    .subject("Password Reset 🔐")
+                    .html("<p>Hello " + username + ",</p>" +
+                            "<p>Your reset token is: <strong>" + token + "</strong></p>" +
+                            "<p>Valid for 10 minutes.</p>")
+                    .build();
+            resend.emails().send(params);
         } catch (Throwable t) {
             System.out.println("Reset email failed: " + t.getMessage());
         }

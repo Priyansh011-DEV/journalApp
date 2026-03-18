@@ -4,22 +4,7 @@ spring:
       uri: ${MONGODB_URI}
       database: journalDB
       auto-index-creation: true
-  mail:
-    host: smtp.gmail.com
-    port: 587
-    username: ${MAIL_USERNAME}
-    password: ${MAIL_PASSWORD}
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
-          ssl:
-            trust: smtp.gmail.com
-          connectiontimeout: 5000
-          timeout: 5000
-          writetimeout: 5000
+
 
 server:
   port: ${PORT:8080}
