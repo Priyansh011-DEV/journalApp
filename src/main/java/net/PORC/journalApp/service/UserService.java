@@ -7,6 +7,7 @@ import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -70,16 +71,6 @@ public class UserService {
         userRepository.save(user);
 
         // 📩 SEND EMAIL (SAFE)
-        try {
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setTo(user.getEmail());
-            message.setSubject("Welcome 🎉");
-            message.setText("Your account has been created successfully!");
-            mailSender.send(message);
-
-        } catch (Throwable t) {        // ← change Exception e to Throwable t
-            System.out.println("Email failed: " + t.getMessage());  // ← change e to t
-        }
 
     }
     public User createAdmin(User user) {
@@ -92,4 +83,22 @@ public class UserService {
         userRepository.save(user);
     }
 
+    @Async
+    public void sendResetEmail(String toEmail, String username, String token) {
+        try {
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setTo(toEmail);
+            message.setSubject("Password Reset Request 🔐");
+            message.setText(
+                    "Hello " + username + ",\n\n" +
+                            "Your password reset token is:\n\n" +
+                            token +
+                            "\n\nThis token is valid for 10 minutes.\n\n" +
+                            "If you did not request this, ignore this email."
+            );
+            mailSender.send(message);
+        } catch (Throwable t) {
+            System.out.println("Reset email failed: " + t.getMessage());
+        }
+    }
 }

@@ -26,8 +26,6 @@ public class resetPasswordcontroller {
     private UserService userService;
     @Autowired
     private PasswordEncoder passwordEncoder;
-    @Autowired
-    private JavaMailSender mailSender;
 
 
 
@@ -51,21 +49,9 @@ public class resetPasswordcontroller {
         userRepository.save(existingUser);
 
         // 📧 SEND EMAIL
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(existingUser.getEmail()); // 🔐 from DB only
-        message.setSubject("Password Reset Request 🔐");
-
-        message.setText(
-                "Hello " + existingUser.getUsername() + ",\n\n" +
-                        "Your password reset token is:\n\n" +
-                        token +
-                        "\n\nThis token is valid for 10 minutes.\n\n" +
-                        "If you did not request this, ignore this email."
-        );
-
-        mailSender.send(message);
-
-        return ResponseEntity.ok("If account exists, token sent to email 📧");
+        // 📧 SEND EMAIL ASYNC
+        userService.sendResetEmail(existingUser.getEmail(), existingUser.getUsername(), token);
+        return ResponseEntity.ok("if account exist token sent to mail");
     }
 
 
