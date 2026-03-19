@@ -1,0 +1,142 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AI Info</title>
+
+    <!-- 🌸 Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&family=Pacifico&display=swap" rel="stylesheet">
+
+    <style>
+        /* 🌸 RESET */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* 🌸 BODY */
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(135deg, #FFE5EC, #E0F7FA, #E5F4FF);
+            background-size: 400% 400%;
+            animation: gradientBG 12s ease infinite;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            height: 100vh;
+            padding: 15px;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* 🌸 CARD */
+        .box {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+
+            padding: 25px;
+            border-radius: 20px;
+            max-width: 420px;
+            width: 100%;
+
+            text-align: center;
+
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        /* 🌸 TITLE */
+        h2 {
+            font-family: 'Pacifico', cursive;
+            margin-bottom: 10px;
+            color: #444;
+        }
+
+        /* 🌸 TEXT */
+        p {
+            font-size: 14px;
+            color: #555;
+            margin-top: 10px;
+            line-height: 1.5;
+        }
+
+        /* 🌸 UPI BOX */
+        .upi {
+            margin-top: 15px;
+            padding: 12px;
+            background: rgba(255,255,255,0.6);
+            border-radius: 12px;
+            font-weight: 600;
+            color: #333;
+
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
+        }
+
+        /* 🌸 BACK BUTTON */
+        .back-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+
+            background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+            color: #fff;
+            font-weight: 600;
+
+            border-radius: 25px;
+            text-decoration: none;
+
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 12px rgba(0,0,0,0.1);
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px) scale(1.04);
+            box-shadow: 0 8px 18px rgba(0,0,0,0.15);
+        }
+
+        /* 🌸 MOBILE */
+        @media (max-width: 500px) {
+            .box {
+                padding: 20px;
+            }
+
+            p {
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="box">
+
+    <h2>AI Info</h2>
+
+    <p>
+        This app uses AI with limited free usage.<br>
+        Experience the power of AI—on us! To keep our services accessible to everyone, we utilize a free-tier AI model.
+        These resources are shared; if the daily limit is reached, the AI will take a 24-hour break.
+        If it’s still unavailable after that, it means the new limit is already consumed—please try again later.
+    </p>
+
+    <p>If you'd like to support:</p>
+
+    <div class="upi">
+        UPI ID: 9149167968@ptaxis
+    </div>
+
+    <a href="/home" class="back-btn">← Back to Home</a>
+
+</div>
+
+</body>
+</html>
+

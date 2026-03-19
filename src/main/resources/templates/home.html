@@ -12,6 +12,7 @@
 
 <body>
 
+
 <!-- AI BUTTON -->
 <div id="aiButton" onclick="toggleChat()">✨ AI Companion ✨</div>
 <div id="aiBubble">Start your AI chat 💬</div>
@@ -33,6 +34,7 @@
     <h1 id="welcomeText">Welcome Back Traveller 😊</h1>
 
     <div class="header-actions">
+        <a href="/info"><button class="info-btn">Info🪧</button></a>
         <button id="logoutBtn">Logout</button>
         <button id="deleteUserBtn" class="danger">Delete Account</button>
         <a href="/RESET1"><button>Reset Password</button></a>
@@ -113,135 +115,152 @@
 
 <script>
 
-    function handleRateLimit(res) {
-        if (res.status === 429) {
-            alert("Too many actions 😅 Slow down!");
-            return true;
-        }
-        return false;
+function handleRateLimit(res) {
+    if (res.status === 429) {
+        alert("Too many actions 😅 Slow down!");
+        return true;
     }
+    return false;
+}
 
-    flatpickr("#calendar", { inline: true, defaultDate: "today" });
+flatpickr("#calendar", { inline: true, defaultDate: "today" });
 
-    document.getElementById("todayDate").innerText =
-        "Today: " + new Date().toDateString();
+document.getElementById("todayDate").innerText =
+    "Today: " + new Date().toDateString();
 
-    setInterval(() => {
-        document.getElementById("clock").innerText =
-            new Date().toLocaleTimeString();
-    }, 1000);
+setInterval(() => {
+    document.getElementById("clock").innerText =
+        new Date().toLocaleTimeString();
+}, 1000);
 
-    const player = document.getElementById("audioPlayer");
-    document.getElementById("musicSelect").onchange = e => {
-        player.src = e.target.value;
-        player.play();
-    };
+// 🔥 MUSIC FIX START
+const player = document.getElementById("audioPlayer");
+const select = document.getElementById("musicSelect");
 
-    document.getElementById("musicToggleBtn").onclick = () => {
-        player.paused ? player.play() : player.pause();
-    };
+// preload song (no autoplay)
+window.addEventListener("DOMContentLoaded", () => {
+    player.src = select.value;
+    player.load();
+});
 
-    async function loadMood() {
-        try {
-            const res = await fetch("/journal/mood");
-            document.getElementById("moodText").innerText = await res.text();
-        } catch {
-            document.getElementById("moodText").innerText = "normal";
-        }
+document.getElementById("musicSelect").onchange = e => {
+    player.src = e.target.value;
+    player.load();
+    player.play();
+};
+
+document.getElementById("musicToggleBtn").onclick = () => {
+    if (player.paused) {
+        player.play().catch(() => {
+            console.log("Play blocked until user interaction");
+        });
+    } else {
+        player.pause();
     }
+};
+// 🔥 MUSIC FIX END
 
-    document.getElementById("journalForm").addEventListener("submit", async e => {
-        e.preventDefault();
+async function loadMood() {
+    try {
+        const res = await fetch("/journal/mood");
+        document.getElementById("moodText").innerText = await res.text();
+    } catch {
+        document.getElementById("moodText").innerText = "normal";
+    }
+}
 
-        const titleInput = document.getElementById("title");
-        const contentInput = document.getElementById("content");
+document.getElementById("journalForm").addEventListener("submit", async e => {
+    e.preventDefault();
 
-        const res = await fetch("/journal", {
+    const titleInput = document.getElementById("title");
+    const contentInput = document.getElementById("content");
+
+    const res = await fetch("/journal", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            title: titleInput.value,
+            content: contentInput.value
+        })
+    });
+
+    if (handleRateLimit(res)) return;
+
+    if (res.ok) {
+        titleInput.value = "";
+        contentInput.value = "";
+        loadMood();
+        alert("Journal added ✨");
+    } else {
+        alert("Error saving journal ❌");
+    }
+});
+
+document.getElementById("viewJournalsBtn").onclick = () => location.href = "/journals";
+document.getElementById("logoutBtn").onclick = () => location.href = "/logout";
+
+document.getElementById("deleteUserBtn").onclick = async () => {
+    if (!confirm("Are you sure?")) return;
+    await fetch("/Webuser", { method: "DELETE" });
+    location.href = "/login";
+};
+
+function toggleChat() {
+    const container = document.getElementById("chatContainer");
+    container.style.display =
+        container.style.display === "flex" ? "none" : "flex";
+
+    const chatBox = document.getElementById("chatBox");
+    chatBox.innerHTML = "";
+
+    addMessage(`Welcome back, ${localStorage.getItem("username") || "Traveller"} 👋`, "bot");
+}
+
+async function sendMessage() {
+    const chatInput = document.getElementById("chatInput");
+    const msg = chatInput.value.trim();
+    if (!msg) return;
+
+    addMessage(msg, "user");
+    const typing = addMessage("...", "bot");
+
+    try {
+        const res = await fetch("/api/chat", {
             method: "POST",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify({
-                title: titleInput.value,
-                content: contentInput.value
+                message: msg,
+                username: localStorage.getItem("username")
             })
         });
 
-        if (handleRateLimit(res)) return;
-
-        if (res.ok) {
-            titleInput.value = "";
-            contentInput.value = "";
-            loadMood();
-            alert("Journal added ✨");
-        } else {
-            alert("Error saving journal ❌");
-        }
-    });
-
-    document.getElementById("viewJournalsBtn").onclick = () => location.href = "/journals";
-    document.getElementById("logoutBtn").onclick = () => location.href = "/logout";
-
-    document.getElementById("deleteUserBtn").onclick = async () => {
-        if (!confirm("Are you sure?")) return;
-        await fetch("/Webuser", { method: "DELETE" });
-        location.href = "/login";
-    };
-
-    function toggleChat() {
-        const container = document.getElementById("chatContainer");
-        container.style.display =
-            container.style.display === "flex" ? "none" : "flex";
-
-        const chatBox = document.getElementById("chatBox");
-        chatBox.innerHTML = "";
-
-        addMessage(`Welcome back, ${localStorage.getItem("username") || "Traveller"} 👋`, "bot");
-    }
-
-    async function sendMessage() {
-        const chatInput = document.getElementById("chatInput");
-        const msg = chatInput.value.trim();
-        if (!msg) return;
-
-        addMessage(msg, "user");
-        const typing = addMessage("...", "bot");
-
-        try {
-            const res = await fetch("/api/chat", {
-                method: "POST",
-                headers: {"Content-Type": "application/json"},
-                body: JSON.stringify({
-                    message: msg,
-                    username: localStorage.getItem("username")
-                })
-            });
-
-            if (handleRateLimit(res)) {
-                typing.innerText = "Slow down 😅";
-                return;
-            }
-
-            typing.innerText = await res.text();
-        } catch {
-            typing.innerText = "Server error ❌";
+        if (handleRateLimit(res)) {
+            typing.innerText = "Slow down 😅";
+            return;
         }
 
-        chatInput.value = "";
+        typing.innerText = await res.text();
+    } catch {
+        typing.innerText = "Server error ❌";
     }
 
-    function addMessage(text, sender) {
-        const chatBox = document.getElementById("chatBox");
+    chatInput.value = "";
+}
 
-        const m = document.createElement("div");
-        m.className = "chat-message " + sender;
-        m.innerText = text;
+function addMessage(text, sender) {
+    const chatBox = document.getElementById("chatBox");
 
-        chatBox.appendChild(m);
-        chatBox.scrollTop = chatBox.scrollHeight;
+    const m = document.createElement("div");
+    m.className = "chat-message " + sender;
+    m.innerText = text;
 
-        return m;
-    }
+    chatBox.appendChild(m);
+    chatBox.scrollTop = chatBox.scrollHeight;
 
-    window.onload = () => {
+    return m;
+}
+
+window.onload = () => {
     const stored = localStorage.getItem("username");
     const username = (stored && stored !== "null") ? stored : "Traveller";
 
@@ -264,6 +283,8 @@
         bubble.style.transform = "translateY(10px)";
     }, 4000);
 };
+
+
 
 </script>
 

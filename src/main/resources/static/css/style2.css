@@ -334,3 +334,22 @@ padding: 10px;
   background: white;
   transform: rotate(45deg);
 }
+.info-btn {
+    display: inline-block;
+    padding: 10px 18px;
+
+    background: linear-gradient(135deg, #a18cd1, #fbc2eb);
+    color: white;
+    font-weight: 600;
+
+    border-radius: 25px;
+    text-decoration: none;
+
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 12px rgba(0,0,0,0.1);
+}
+
+.info-btn:hover {
+    transform: translateY(-2px) scale(1.04);
+    box-shadow: 0 8px 18px rgba(0,0,0,0.15);
+}

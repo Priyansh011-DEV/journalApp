@@ -75,7 +75,7 @@ public class GeminiService {
 
         } catch (Exception e) {
             System.err.println("❌ GEMINI EXCEPTION: " + e.getMessage());
-            return "ERROR_CALLING_GEMINI";
+            return "rate limit reached try after 24hr 🐰 refer to info page";
         }
     }
 

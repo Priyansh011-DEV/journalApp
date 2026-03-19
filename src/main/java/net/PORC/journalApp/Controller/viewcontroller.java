@@ -28,4 +28,8 @@ public class viewcontroller {
     public String journals() {
         return "journals";
     }
+    @GetMapping("/info")
+    public String infoPage() {
+        return "ai-info"; // refers to ai-info.html
+    }
 }
