@@ -35,3 +35,7 @@ management:
 logging:
   level:
     org.springframework.boot.autoconfigure.mail: DEBUG
+
+gemini:
+  api:
+    key: ${GEMINI_API_KEY}

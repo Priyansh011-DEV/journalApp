@@ -12,4 +12,6 @@ public interface JournalEntryRepo extends MongoRepository<JournalEntry, String> 
     List<JournalEntry> id(ObjectId id);
 
     void deleteById(String id);
+    List<JournalEntry> findByUsername(String username);
+    List<JournalEntry> findTop10ByUsernameOrderByDateDesc(String username);
 }

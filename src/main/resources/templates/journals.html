@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Journals</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&family=Pacifico&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style2.css">
+</head>
+
+<body>
+
+<header>
+    <h1>📖 Your Journals</h1>
+    <button id="backBtn">⬅ Back</button>
+</header>
+
+<div class="page-container">
+    <div id="journalListPage" class="journal-list-page"></div>
+</div>
+
+<script>
+    // 🔐 Escape HTML
+    function escapeHTML(str) {
+        return str.replace(/[&<>"']/g, tag => ({
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#39;'
+        }[tag]));
+    }
+
+    // 📥 Load Journals
+    async function loadJournalsPage() {
+        const res = await fetch("/journal");
+        if (!res.ok) return;
+
+        const data = await res.json();
+        const container = document.getElementById("journalListPage");
+
+        container.innerHTML = "";
+
+        if (!data.length) {
+            container.innerHTML = "<p>No journals yet...</p>";
+            return;
+        }
+
+        data.reverse().forEach(journal => {
+            const div = document.createElement("div");
+            div.className = "journal-card";
+
+            const contentDiv = document.createElement("div");
+            contentDiv.className = "journal-content";
+
+            contentDiv.innerHTML = `
+                <h3>${escapeHTML(journal.title)}</h3>
+                <p>${escapeHTML(journal.content)}</p>
+                <div class="ai-box">
+                    <p>🧠 Mood: ${escapeHTML(journal.mood || "unknown")}</p>
+                    <p>💡 Advice: ${escapeHTML(journal.aiAdvice || "No advice")}</p>
+                </div>
+            `;
+
+            const actions = document.createElement("div");
+            actions.className = "journal-actions";
+
+            const editBtn = document.createElement("button");
+            editBtn.innerText = "✏️";
+
+            editBtn.addEventListener("click", () => {
+                editJournal(journal.id, journal.title, journal.content);
+            });
+
+            const deleteBtn = document.createElement("button");
+            deleteBtn.innerText = "🗑️";
+
+            deleteBtn.addEventListener("click", () => {
+                deleteJournal(journal.id, div);
+            });
+
+            actions.appendChild(editBtn);
+            actions.appendChild(deleteBtn);
+
+            div.appendChild(contentDiv);
+            div.appendChild(actions);
+
+            container.appendChild(div);
+        });
+    }
+
+    // 🗑️ Delete
+    async function deleteJournal(id, el) {
+        await fetch(`/journal/DeleteByID/${id}`, { method: "DELETE" });
+        el.remove();
+    }
+
+    // ✏️ Safe Edit
+    async function editJournal(id, oldTitle, oldContent) {
+        const newTitle = prompt("Edit title:", oldTitle);
+        if (newTitle === null) return;
+
+        const newContent = prompt("Edit content:", oldContent);
+        if (newContent === null) return;
+
+        if (!newTitle.trim() || !newContent.trim()) {
+            alert("Fields cannot be empty");
+            return;
+        }
+
+        await fetch(`/journal/update/${id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ title: newTitle, content: newContent })
+        });
+
+        loadJournalsPage();
+    }
+
+    // 🔁 Navigation
+    document.getElementById("backBtn").addEventListener("click", () => {
+        window.location.href = "/home";
+    });
+
+    // INIT
+    loadJournalsPage();
+</script>
+
+</body>
+</html>

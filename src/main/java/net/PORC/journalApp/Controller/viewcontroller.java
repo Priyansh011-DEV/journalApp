@@ -23,4 +23,9 @@ public class viewcontroller {
     public String register() {
         return "register";
     }
+
+    @GetMapping("/journals")
+    public String journals() {
+        return "journals";
+    }
 }

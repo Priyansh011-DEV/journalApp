@@ -109,11 +109,22 @@ public class Journalcontroller {
                 oldEntry.setContent(newEntry.getContent());
             }
 
-            journalEntryService.SaveEntry(oldEntry);
+            journalEntryService.SaveEntry(oldEntry, username);
 
             return ResponseEntity.ok(oldEntry);
 
         }).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+    @GetMapping("/mood")
+    public ResponseEntity<String> getMood() {
+
+        String username = SecurityContextHolder.getContext()
+                .getAuthentication()
+                .getName();
+
+        String mood = journalEntryService.getTodayMood(username);
+
+        return ResponseEntity.ok(mood);
     }
 
 }

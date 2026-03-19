@@ -1,14 +1,13 @@
 <!DOCTYPE html>
-
 <html>
 <head>
     <title>Reset Password</title>
 
-    ```
+    <!-- FONTS -->
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&family=Pacifico&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/style3.css">
-    ```
 
+    <!-- CSS -->
+    <link rel="stylesheet" href="/css/style3.css">
 </head>
 
 <body>
@@ -17,7 +16,11 @@
 
 <div class="reset-container">
 
-    ```
+    <!-- 🔙 BACK BUTTON -->
+    <div class="back-btn">
+        <a href="/home">← Back to Login ⚙️⚙</a>
+    </div>
+
     <!-- STEP 1 -->
     <div class="reset-card">
         <h3>Step 1: Generate Reset Token</h3>
@@ -32,9 +35,7 @@
     <div class="reset-card">
         <h3>Step 2: Reset Password</h3>
 
-        <!-- 🔒 masked token -->
         <input type="password" id="token" placeholder="Enter Token">
-
         <input type="password" id="newPassword" placeholder="New Password">
 
         <button onclick="resetPassword()">Reset Password</button>
@@ -43,44 +44,42 @@
     <!-- FOOTER -->
     <div class="reset-footer">
         <p>For queries: support.inc.japp@gmail.com</p>
+
         <a href="https://forms.gle/9cewy9FHWzKHBFWj8" target="_blank">
             <button class="feedback-btn">Give Feedback</button>
         </a>
     </div>
-    ```
 
 </div>
 
 <script>
 
     // STEP 1: GENERATE TOKEN
- async function getToken() {
-    const username = document.getElementById("username").value;
-    const email = document.getElementById("email").value;
+    async function getToken() {
+        const username = document.getElementById("username").value;
+        const email = document.getElementById("email").value;
 
-    if (!username || !email) {
-        alert("⚠️ Enter username and email");
-        return;
+        if (!username || !email) {
+            alert("⚠️ Enter username and email");
+            return;
+        }
+
+        const res = await fetch("/ResetPassword/Forgot", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ username, email })
+        });
+
+        const token = await res.text();
+
+        if (res.ok) {
+            alert("🔐 Your reset token:\n\n" + token + "\n\n(Copy this. Valid for 10 minutes)");
+        } else {
+            alert(token);
+        }
     }
-
-    const res = await fetch("/ResetPassword/Forgot", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ username, email })
-    });
-
-    const token = await res.text();
-
-    if (res.ok) {
-        alert("🔐 Your reset token:\n\n" + token + "\n\n(Copy this. Valid for 10 minutes)");
-
-        // DO NOT auto-fill
-    } else {
-        alert(token);
-    }
-}
 
     // STEP 2: RESET PASSWORD
     async function resetPassword() {
@@ -104,15 +103,17 @@
 
         if (res.ok) {
             alert("🔥 Password reset successful!");
-            window.location.href = "/login";
+            window.location.href = "/login"; // redirect after success
         } else {
             alert(text);
         }
     }
 
 </script>
+
 <footer>
     <p>For queries: support.inc.japp@gmail.com</p>
 </footer>
+
 </body>
 </html>

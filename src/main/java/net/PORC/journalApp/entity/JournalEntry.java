@@ -18,9 +18,13 @@ import java.util.Date;
 public class JournalEntry {
     @Id
     private String id;
+    private String username;
     @NotBlank(message = "title is required")
     private String title;
     private String content;
     @JsonIgnore
     private LocalDateTime date;
+    private String mood;
+    private String aiSummary;
+    private String aiAdvice;
 }

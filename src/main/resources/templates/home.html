@@ -1,67 +1,71 @@
 <!DOCTYPE html>
+
 <html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
 
-    <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&family=Pacifico&display=swap" rel="stylesheet">
-
-    <!-- CSS -->
     <link rel="stylesheet" href="/css/style2.css">
-
-    <!-- 📅 Calendar CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-
 </head>
 
 <body>
 
+<!-- AI BUTTON -->
+<div id="aiButton" onclick="toggleChat()">✨ AI Companion ✨</div>
+<div id="aiBubble">Start your AI chat 💬</div>
+
+<!-- CHAT -->
+<div id="chatContainer">
+    <div class="chat-header">AI Companion</div>
+    <div id="chatBox"></div>
+
+    <div class="chat-input">
+        <input type="text" id="chatInput" placeholder="Talk to me...">
+        <button onclick="sendMessage()">➤</button>
+    </div>
+</div>
+
 <img src="/images/walk.png" class="anime-popup" />
 
-<!-- HEADER -->
 <header>
-    <h1>Weclome Back Traveller 😊</h1>
+    <h1 id="welcomeText">Welcome Back Traveller 😊</h1>
 
     <div class="header-actions">
-        <button onclick="logout()">Logout</button>
-        <button onclick="deleteUser()" class="danger">Delete Account</button>
-
-        <a href="/RESET1">
-            <button>Reset Password</button>
-        </a>
+        <button id="logoutBtn">Logout</button>
+        <button id="deleteUserBtn" class="danger">Delete Account</button>
+        <a href="/RESET1"><button>Reset Password</button></a>
     </div>
 </header>
 
-<!-- MAIN -->
 <div class="container">
 
     <!-- LEFT -->
     <div class="left">
         <div class="card">
             <h2>📊 Dashboard</h2>
-            <p id="todayDate">Today: 19 March 2026</p>
-            <div id="calendar"></div>
-            <img src="/images/cnrollcalen.png" class="calendar-img" />
+            <p id="todayDate"></p>
+            <div class="calendar-wrapper">
+                <div id="calendar"></div>
+                <img src="/images/cnrollcalen.png" class="calendar-img" />
+            </div>
         </div>
     </div>
 
     <!-- MIDDLE -->
     <div class="middle">
 
-        <!-- 😊 MOOD -->
         <div class="card small-card">
             <h3>😊 Mood Today</h3>
-            <p id="moodText">Feeling calm 🌸</p>
+            <p id="moodText">Loading...</p>
         </div>
 
-        <!-- ⏰ CLOCK -->
         <div class="card small-card">
             <h3>⏰ Time</h3>
             <p id="clock"></p>
         </div>
 
-        <!-- 🎧 MUSIC -->
         <div class="card small-card">
             <h3>🎧 Chill Music</h3>
 
@@ -75,7 +79,7 @@
                 <option value="/music/song7.mp3">music 7</option>
             </select>
 
-            <button onclick="toggleMusic()">Play / Pause</button>
+            <button id="musicToggleBtn">Play / Pause</button>
             <audio id="audioPlayer" loop></audio>
         </div>
 
@@ -84,144 +88,182 @@
     <!-- RIGHT -->
     <div class="right">
 
-        <!-- CREATE JOURNAL -->
         <div class="card">
             <h2>Create Journal Entry</h2>
 
-            <form id="journalForm" class="journal-form">
+            <form id="journalForm">
                 <input type="text" id="title" placeholder="Title" required />
                 <textarea id="content" placeholder="Write something..." required></textarea>
                 <button type="submit">Save Journal</button>
             </form>
         </div>
 
-        <!-- JOURNAL LIST -->
-        <div class="card">
-            <h2>Your Journals</h2>
-            <div id="journalList" class="journal-list"></div>
+        <div class="card center">
+            <h3>📚 Your Journals</h3>
+            <button id="viewJournalsBtn" class="view-btn">
+                View All Journals →
+            </button>
         </div>
 
     </div>
 
 </div>
 
-
-
-<!-- 📅 Calendar JS -->
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 <script>
 
-    // 📅 CALENDAR
-    flatpickr("#calendar", {
-        inline: true,
-        defaultDate: "today"
-    });
+    function handleRateLimit(res) {
+        if (res.status === 429) {
+            alert("Too many actions 😅 Slow down!");
+            return true;
+        }
+        return false;
+    }
 
-    // 🎧 MUSIC
+    flatpickr("#calendar", { inline: true, defaultDate: "today" });
+
+    document.getElementById("todayDate").innerText =
+        "Today: " + new Date().toDateString();
+
+    setInterval(() => {
+        document.getElementById("clock").innerText =
+            new Date().toLocaleTimeString();
+    }, 1000);
+
     const player = document.getElementById("audioPlayer");
-    const select = document.getElementById("musicSelect");
-
-    select.addEventListener("change", () => {
-        player.src = select.value;
+    document.getElementById("musicSelect").onchange = e => {
+        player.src = e.target.value;
         player.play();
-    });
+    };
 
-    function toggleMusic() {
-        if (player.paused) player.play();
-        else player.pause();
+    document.getElementById("musicToggleBtn").onclick = () => {
+        player.paused ? player.play() : player.pause();
+    };
+
+    async function loadMood() {
+        try {
+            const res = await fetch("/journal/mood");
+            document.getElementById("moodText").innerText = await res.text();
+        } catch {
+            document.getElementById("moodText").innerText = "normal";
+        }
     }
 
-    // ⏰ CLOCK
-    function updateClock() {
-        const now = new Date();
-        document.getElementById("clock").innerText = now.toLocaleTimeString();
-    }
-    setInterval(updateClock, 1000);
-    updateClock();
-
-    // 📥 LOAD JOURNALS
-    async function loadJournals() {
-        const res = await fetch("/journal");
-         if (!res.ok) {
-        console.error("Failed to load journals");
-        return;
-    }
-        const data = await res.json();
-
-        const list = document.getElementById("journalList");
-        list.innerHTML = "";
-
-        data.forEach(journal => {
-            const div = document.createElement("div");
-            div.classList.add("journal-card");
-
-            div.innerHTML = `
-                <div class="journal-content">
-                    <h3>${journal.title}</h3>
-                    <p>${journal.content}</p>
-                </div>
-
-                <div class="journal-actions">
-                    <button onclick="editJournal('${journal.id}', \`${journal.title}\`, \`${journal.content}\`)">✏️</button>
-                    <button onclick="deleteJournal('${journal.id}', this.closest('.journal-card'))">🗑️</button>
-                </div>
-            `;
-
-            list.appendChild(div);
-        });
-    }
-
-    // SAVE
-    document.getElementById("journalForm").addEventListener("submit", async (e) => {
+    document.getElementById("journalForm").addEventListener("submit", async e => {
         e.preventDefault();
 
-        const title = document.getElementById("title").value;
-        const content = document.getElementById("content").value;
+        const titleInput = document.getElementById("title");
+        const contentInput = document.getElementById("content");
 
-        await fetch("/journal", {
+        const res = await fetch("/journal", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ title, content })
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({
+                title: titleInput.value,
+                content: contentInput.value
+            })
         });
 
-        loadJournals();
+        if (handleRateLimit(res)) return;
+
+        if (res.ok) {
+            titleInput.value = "";
+            contentInput.value = "";
+            loadMood();
+            alert("Journal added ✨");
+        } else {
+            alert("Error saving journal ❌");
+        }
     });
 
-    // DELETE
-    async function deleteJournal(id, el) {
-        await fetch(`/journal/DeleteByID/${id}`, { method: "DELETE" });
-        el.remove();
-    }
+    document.getElementById("viewJournalsBtn").onclick = () => location.href = "/journals";
+    document.getElementById("logoutBtn").onclick = () => location.href = "/logout";
 
-    // EDIT
-    async function editJournal(id, oldTitle, oldContent) {
-        const newTitle = prompt("Edit title:", oldTitle);
-        const newContent = prompt("Edit content:", oldContent);
-
-        if (!newTitle || !newContent) return;
-
-        await fetch(`/journal/update/${id}`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ title: newTitle, content: newContent })
-        });
-
-        loadJournals();
-    }
-
-    function logout() {
-        window.location.href = "/logout";
-    }
-
-    async function deleteUser() {
+    document.getElementById("deleteUserBtn").onclick = async () => {
         if (!confirm("Are you sure?")) return;
-
         await fetch("/Webuser", { method: "DELETE" });
-        window.location.href = "/login";
+        location.href = "/login";
+    };
+
+    function toggleChat() {
+        const container = document.getElementById("chatContainer");
+        container.style.display =
+            container.style.display === "flex" ? "none" : "flex";
+
+        const chatBox = document.getElementById("chatBox");
+        chatBox.innerHTML = "";
+
+        addMessage(`Welcome back, ${localStorage.getItem("username") || "Traveller"} 👋`, "bot");
     }
 
-    loadJournals();
+    async function sendMessage() {
+        const chatInput = document.getElementById("chatInput");
+        const msg = chatInput.value.trim();
+        if (!msg) return;
+
+        addMessage(msg, "user");
+        const typing = addMessage("...", "bot");
+
+        try {
+            const res = await fetch("/api/chat", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({
+                    message: msg,
+                    username: localStorage.getItem("username")
+                })
+            });
+
+            if (handleRateLimit(res)) {
+                typing.innerText = "Slow down 😅";
+                return;
+            }
+
+            typing.innerText = await res.text();
+        } catch {
+            typing.innerText = "Server error ❌";
+        }
+
+        chatInput.value = "";
+    }
+
+    function addMessage(text, sender) {
+        const chatBox = document.getElementById("chatBox");
+
+        const m = document.createElement("div");
+        m.className = "chat-message " + sender;
+        m.innerText = text;
+
+        chatBox.appendChild(m);
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+        return m;
+    }
+
+    window.onload = () => {
+    const stored = localStorage.getItem("username");
+    const username = (stored && stored !== "null") ? stored : "Traveller";
+
+    document.getElementById("welcomeText").innerText =
+        `Welcome back, ${username} 😊`;
+
+    loadMood();
+
+    const bubble = document.getElementById("aiBubble");
+
+    // show bubble
+    setTimeout(() => {
+        bubble.style.opacity = "1";
+        bubble.style.transform = "translateY(0)";
+    }, 500);
+
+    // hide bubble
+    setTimeout(() => {
+        bubble.style.opacity = "0";
+        bubble.style.transform = "translateY(10px)";
+    }, 4000);
+};
 
 </script>
 
