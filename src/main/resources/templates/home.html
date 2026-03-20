@@ -31,7 +31,7 @@
 <img src="/images/walk.png" class="anime-popup" />
 
 <header>
-    <h1 id="welcomeText">Welcome Back Traveller 😊</h1>
+    <h1 id="welcomeText"> 🪶Welcome Back To Your World 🪶</h1>
 
     <div class="header-actions">
         <a href="/info"><button class="info-btn">Info🪧</button></a>
@@ -59,7 +59,7 @@
     <div class="middle">
 
         <div class="card small-card">
-            <h3>😊 Mood Today</h3>
+            <h3> 🤔Mood Today ❓</h3>
             <p id="moodText">Loading...</p>
         </div>
 
@@ -162,7 +162,7 @@ document.getElementById("musicToggleBtn").onclick = () => {
 
 async function loadMood() {
     try {
-        const res = await fetch("/journal/mood");
+        const res = await fetch("/JUournal/mood");
         document.getElementById("moodText").innerText = await res.text();
     } catch {
         document.getElementById("moodText").innerText = "normal";
@@ -262,10 +262,10 @@ function addMessage(text, sender) {
 
 window.onload = () => {
     const stored = localStorage.getItem("username");
-    const username = (stored && stored !== "null") ? stored : "Traveller";
+    const username = (stored && stored !== "null") ? stored : "To Your World 🪶";
 
     document.getElementById("welcomeText").innerText =
-        `Welcome back, ${username} 😊`;
+        `🪶 Welcome Back, ${username} `;
 
     loadMood();
 

@@ -140,4 +140,13 @@ public class GeminiService {
 
         return callGemini(prompt);
     }
+    public String getMoodSummary(String mood, Map<String, Integer> scores) {
+
+        String prompt = "User mood analysis:\n" +
+                "Dominant Mood: " + mood + "\n" +
+                "Scores: " + scores + "\n\n" +
+                "Give short emotional insight and advice in 2-3 lines.";
+
+        return callGemini(prompt);
+    }
 }

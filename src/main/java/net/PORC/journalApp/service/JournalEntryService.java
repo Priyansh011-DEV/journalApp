@@ -2,6 +2,7 @@ package net.PORC.journalApp.service;
 
 import net.PORC.journalApp.Repository.JournalEntryRepo;
 import net.PORC.journalApp.dto.AIResponse;
+import net.PORC.journalApp.dto.AnalysisResult;
 import net.PORC.journalApp.entity.JournalEntry;
 import net.PORC.journalApp.entity.User;
 import org.bson.types.ObjectId;
@@ -23,6 +24,8 @@ public class JournalEntryService {
     private UserService userService;
     @Autowired
     private GeminiService geminiService;
+    @Autowired
+    private LocalAIService localAIService;
 
     @Transactional
     public void SaveEntry(JournalEntry journalEntry, String username) {
@@ -33,14 +36,15 @@ public class JournalEntryService {
         journalEntry.setDate(LocalDateTime.now());
 
         // 🤖 AI CALL
-        AIResponse ai = geminiService.analyzeJournalAndParse(journalEntry.getContent());
+        AnalysisResult result = localAIService.analyze(journalEntry.getContent());
 
-        // 🧠 MAP AI → ENTITY
-        if (ai != null) {
-            journalEntry.setMood(ai.getMood());
-            journalEntry.setAiSummary(ai.getSummary());
-            journalEntry.setAiAdvice(ai.getAdvice());
-        }
+        journalEntry.setMood(result.getMood());
+        journalEntry.setMoodScore(result.getScores());
+        journalEntry.setAiAdvice(result.getAdvice());
+        journalEntry.setAiSource("LOCAL");
+
+        // DEPRECIATED LOGIC 🧠 MAP AI → ENTITY//
+
 
         // 💾 SAVE ENTRY
         JournalEntry saved = journalEntryRepo.save(journalEntry);
@@ -91,31 +95,25 @@ public class JournalEntryService {
     }
     public String getTodayMood(String username) {
 
+        LocalDateTime last24h = LocalDateTime.now().minusHours(24);
+
         List<JournalEntry> entries =
-                journalEntryRepo.findTop10ByUsernameOrderByDateDesc(username);
+                journalEntryRepo.findByUsernameAndDateAfter(username, last24h);
 
-        // ❌ No journal case
-        if (entries.isEmpty()) {
-            return "normal";
-        }
-
-        Map<String, Integer> moodCount = new HashMap<>();
+        Map<String, Integer> totalScores = new HashMap<>();
 
         for (JournalEntry entry : entries) {
-            String mood = entry.getMood();
+            if (entry.getMoodScore() == null) continue;
 
-            if (mood == null || mood.isEmpty()) continue;
-
-            moodCount.put(mood, moodCount.getOrDefault(mood, 0) + 1);
+            for (var e : entry.getMoodScore().entrySet()) {
+                totalScores.put(e.getKey(),
+                        totalScores.getOrDefault(e.getKey(), 0) + e.getValue());
+            }
         }
 
-        // ❌ If somehow all moods null
-        if (moodCount.isEmpty()) {
-            return "normal";
-        }
+        if (totalScores.isEmpty()) return "neutral";
 
-        // 🔥 Find most frequent mood
-        return moodCount.entrySet()
+        return totalScores.entrySet()
                 .stream()
                 .max(Map.Entry.comparingByValue())
                 .get()

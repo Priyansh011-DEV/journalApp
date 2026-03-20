@@ -11,6 +11,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.Map;
 
 @Document(collection = "journal_entries")
 @Data
@@ -27,4 +28,6 @@ public class JournalEntry {
     private String mood;
     private String aiSummary;
     private String aiAdvice;
+    private Map<String, Integer> moodScore;
+    private String AiSource;
 }
