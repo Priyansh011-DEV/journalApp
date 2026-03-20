@@ -140,6 +140,7 @@ bottom: 10px;
 width: 90px;
 pointer-events: none;
 z-index: 5;
+opacity: 0.4;
 }
 
 /* ========================= */

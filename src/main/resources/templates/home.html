@@ -4,7 +4,7 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
-
+    <link rel="icon" type="image/png" href="/images/favicon.png">
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&family=Pacifico&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/style2.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
@@ -31,7 +31,7 @@
 <img src="/images/walk.png" class="anime-popup" />
 
 <header>
-    <h1 id="welcomeText"> 🪶Welcome Back To Your World 🪶</h1>
+    <h1 id="welcomeText"> 🪶Welcome Back To Your World 🪶   📝SENTiDeX📝   </h1>
 
     <div class="header-actions">
         <a href="/info"><button class="info-btn">Info🪧</button></a>
@@ -262,7 +262,7 @@ function addMessage(text, sender) {
 
 window.onload = () => {
     const stored = localStorage.getItem("username");
-    const username = (stored && stored !== "null") ? stored : "To Your World 🪶";
+    const username = (stored && stored !== "null") ? stored : "To Your World 🪶   📝SENTiDeX📝    ";
 
     document.getElementById("welcomeText").innerText =
         `🪶 Welcome Back, ${username} `;
