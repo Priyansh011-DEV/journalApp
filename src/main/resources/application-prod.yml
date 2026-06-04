@@ -4,6 +4,14 @@ spring:
       uri: ${MONGODB_URI}
       database: journalDB
       auto-index-creation: true
+
+  datasource:
+    vector:
+      url: ${NEON_DB_URL}
+      username: ${NEON_DB_USERNAME}
+      password: ${NEON_DB_PASSWORD}
+      driver-class-name: org.postgresql.Driver
+
   mail:
     host: smtp-relay.brevo.com
     port: 587
@@ -18,3 +26,11 @@ spring:
 
 server:
   port: ${PORT:8080}
+
+gemini:
+  api:
+    key: ${GEMINI_API_KEY}
+
+huggingface:
+  api:
+    token: ${HUGGINGFACE_TOKEN}

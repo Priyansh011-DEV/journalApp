@@ -1,143 +1,286 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>AI Info</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SENTiDeX — AI Info</title>
     <link rel="icon" type="image/png" href="/images/favicon.png">
-
-    <!-- 🌸 Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&family=Pacifico&display=swap" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Special+Elite&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
     <style>
-        /* 🌸 RESET */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --ink: #1a1008;
+            --paper: #f5f0e8;
+            --paper-dark: #ede8d8;
+            --accent: #8b2500;
+            --line: #c8b89a;
+            --faded: #7a6a50;
         }
 
-        /* 🌸 BODY */
         body {
-            font-family: 'Quicksand', sans-serif;
-            background: linear-gradient(135deg, #FFE5EC, #E0F7FA, #E5F4FF);
-            background-size: 400% 400%;
-            animation: gradientBG 12s ease infinite;
-
+            background: var(--paper);
+            min-height: 100vh;
             display: flex;
-            justify-content: center;
             align-items: center;
-
-            height: 100vh;
-            padding: 15px;
+            justify-content: center;
+            font-family: 'Special Elite', monospace;
+            overflow: hidden;
+            position: relative;
         }
 
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: repeating-linear-gradient(
+                transparent, transparent 31px,
+                var(--line) 31px, var(--line) 32px
+            );
+            opacity: 0.35;
+            pointer-events: none;
         }
 
-        /* 🌸 CARD */
-        .box {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(12px);
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0; bottom: 0; left: 80px;
+            width: 2px;
+            background: rgba(180,50,50,0.3);
+            pointer-events: none;
+        }
 
-            padding: 25px;
-            border-radius: 20px;
-            max-width: 420px;
-            width: 100%;
+        .page {
+            position: relative;
+            width: 500px;
+            padding: 60px 55px 50px;
+            animation: pageOpen 0.9s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+            transform-origin: left center;
+        }
 
+        @keyframes pageOpen {
+            from { opacity: 0; transform: perspective(1200px) rotateY(-25deg) translateX(-40px); }
+            to   { opacity: 1; transform: perspective(1200px) rotateY(0deg) translateX(0); }
+        }
+
+        /* binding spine */
+        .page::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -4px; bottom: 0;
+            width: 8px;
+            background: linear-gradient(to right, #8b6a3a, #c8a870, #8b6a3a);
+            border-radius: 2px 0 0 2px;
+        }
+
+        /* stamp */
+        .stamp {
+            position: absolute;
+            top: 30px; right: 30px;
+            width: 64px; height: 64px;
+            border: 2px solid var(--accent);
+            border-radius: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform: rotate(8deg);
+            opacity: 0.4;
+        }
+
+        .stamp span {
+            font-size: 7px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--accent);
             text-align: center;
-
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            line-height: 1.4;
         }
 
-        /* 🌸 TITLE */
-        h2 {
-            font-family: 'Pacifico', cursive;
-            margin-bottom: 10px;
-            color: #444;
+        /* masthead */
+        .masthead {
+            text-align: center;
+            margin-bottom: 36px;
+            position: relative;
         }
 
-        /* 🌸 TEXT */
-        p {
-            font-size: 14px;
-            color: #555;
-            margin-top: 10px;
-            line-height: 1.5;
+        .masthead::before { content: ''; display: block; width: 100%; height: 1px; background: var(--ink); margin-bottom: 14px; }
+        .masthead::after  { content: ''; display: block; width: 100%; height: 2px; background: var(--ink); margin-top: 16px; }
+
+        .paper-label {
+            font-size: 10px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--faded);
+            display: block;
+            margin-bottom: 8px;
         }
 
-        /* 🌸 UPI BOX */
-        .upi {
-            margin-top: 15px;
-            padding: 12px;
-            background: rgba(255,255,255,0.6);
-            border-radius: 12px;
-            font-weight: 600;
-            color: #333;
-
-            box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 46px;
+            font-weight: 900;
+            color: var(--ink);
+            letter-spacing: -1px;
+            line-height: 1;
+            display: block;
         }
 
-        /* 🌸 BACK BUTTON */
-        .back-btn {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 10px 20px;
+        .tagline {
+            font-family: 'IM Fell English', serif;
+            font-style: italic;
+            font-size: 13px;
+            color: var(--faded);
+            margin-top: 6px;
+            display: block;
+        }
 
-            background: linear-gradient(135deg, #ff9a9e, #fad0c4);
-            color: #fff;
-            font-weight: 600;
+        /* body text */
+        .notice {
+            font-family: 'IM Fell English', serif;
+            font-size: 15px;
+            line-height: 1.75;
+            color: var(--ink);
+            margin-bottom: 24px;
+        }
 
-            border-radius: 25px;
+        .notice strong {
+            font-weight: 700;
+            font-style: normal;
+        }
+
+        /* section rule */
+        .section-rule {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 22px 0 18px;
+        }
+
+        .section-rule span {
+            font-size: 9px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--faded);
+            white-space: nowrap;
+        }
+
+        .section-rule::before,
+        .section-rule::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--line);
+        }
+
+        /* UPI block */
+        .upi-block {
+            background: var(--paper-dark);
+            border: 1px solid var(--line);
+            border-left: 4px solid var(--ink);
+            padding: 14px 18px;
+            margin-bottom: 28px;
+        }
+
+        .upi-block .upi-label {
+            font-size: 9px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--faded);
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .upi-block .upi-id {
+            font-family: 'Playfair Display', serif;
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--ink);
+            letter-spacing: 1px;
+        }
+
+        /* back button */
+        .btn-back {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            background: var(--ink);
+            color: var(--paper);
+            border: none;
+            font-family: 'Special Elite', monospace;
+            font-size: 11px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            cursor: pointer;
+            text-align: center;
             text-decoration: none;
-
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 12px rgba(0,0,0,0.1);
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
         }
 
-        .back-btn:hover {
-            transform: translateY(-2px) scale(1.04);
-            box-shadow: 0 8px 18px rgba(0,0,0,0.15);
+        .btn-back::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--accent);
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
         }
 
-        /* 🌸 MOBILE */
-        @media (max-width: 500px) {
-            .box {
-                padding: 20px;
-            }
+        .btn-back span { position: relative; z-index: 1; }
+        .btn-back:hover::before { transform: translateX(0); }
+        .btn-back:hover { letter-spacing: 6px; }
 
-            p {
-                font-size: 13px;
-            }
+        .page-num {
+            position: absolute;
+            bottom: 20px;
+            right: 55px;
+            font-family: 'IM Fell English', serif;
+            font-style: italic;
+            font-size: 11px;
+            color: var(--faded);
+        }
+
+        @media (max-width: 540px) {
+            .page { width: 100%; padding: 50px 28px 40px; }
+            .stamp { display: none; }
         }
     </style>
 </head>
-
 <body>
 
-<div class="box">
+<div class="page">
+    <div class="stamp"><span>AI<br>NOTICE</span></div>
 
-    <h2>AI Info</h2>
-
-    <p>
-        This app uses AI with limited free usage.<br>
-        Experience the power of AI—on us! To keep our services accessible to everyone, we utilize a free-tier AI model.
-        These resources are shared; if the daily limit is reached, the AI will take a 24-hour break.
-        If it’s still unavailable after that, it means the new limit is already consumed—please try again later.
-    </p>
-
-    <p>If you'd like to support:</p>
-
-    <div class="upi">
-        UPI ID: 9149167968@ptaxis
+    <div class="masthead">
+        <span class="paper-label">Important Notice</span>
+        <span class="logo">SENTiDeX</span>
+        <span class="tagline">About the AI Companion feature.</span>
     </div>
 
-    <a href="/home" class="back-btn">← Back to Home</a>
+    <p class="notice">
+        This application uses an <strong>AI model on a free tier</strong>. These shared resources
+        are offered at no cost to every reader of this chronicle. Should the daily limit be
+        reached, the companion will rest for <strong>24 hours</strong> before resuming service.
+        If it remains unavailable after that window, the new period's allowance has already
+        been consumed — please return later.
+    </p>
 
+    <div class="section-rule"><span>Support the Chronicle</span></div>
+
+    <p class="notice" style="font-size:13px; color: var(--faded);">
+        If you wish to contribute toward keeping the lights on:
+    </p>
+
+    <div class="upi-block">
+        <span class="upi-label">UPI Address</span>
+        <span class="upi-id">9149167968@ptaxis</span>
+    </div>
+
+    <a href="/home" class="btn-back"><span>← Return to Home</span></a>
+
+    <span class="page-num">p. 005</span>
 </div>
 
 </body>
 </html>
-

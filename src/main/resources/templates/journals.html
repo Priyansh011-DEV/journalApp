@@ -1,145 +1,363 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Journals</title>
+    <title>SENTiDeX — Your Journals</title>
     <link rel="icon" type="image/png" href="/images/favicon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Special+Elite&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&family=Pacifico&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/style2.css">
+        :root {
+            --ink: #1a1008;
+            --paper: #f5f0e8;
+            --paper-dark: #ede8d8;
+            --accent: #8b2500;
+            --line: #c8b89a;
+            --faded: #7a6a50;
+            --spine: linear-gradient(to right, #8b6a3a, #c8a870, #8b6a3a);
+        }
+
+        body {
+            background: var(--paper);
+            min-height: 100vh;
+            font-family: 'Special Elite', monospace;
+            color: var(--ink);
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: repeating-linear-gradient(
+                transparent, transparent 31px,
+                var(--line) 31px, var(--line) 32px
+            );
+            opacity: 0.22;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0; bottom: 0; left: 80px;
+            width: 2px;
+            background: rgba(180,50,50,0.22);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ── HEADER ── */
+        header {
+            position: relative;
+            z-index: 10;
+            border-bottom: 3px double var(--ink);
+            padding: 18px 40px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--paper);
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; bottom: 0;
+            width: 8px;
+            background: var(--spine);
+        }
+
+        .masthead-group {
+            padding-left: 16px;
+        }
+
+        .issue-label {
+            font-size: 9px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--faded);
+            display: block;
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            font-weight: 900;
+            color: var(--ink);
+            letter-spacing: -1px;
+            line-height: 1.1;
+            display: block;
+        }
+
+        .sub-title {
+            font-family: 'IM Fell English', serif;
+            font-style: italic;
+            font-size: 13px;
+            color: var(--faded);
+        }
+
+        #backBtn {
+            background: transparent;
+            border: 1.5px solid var(--ink);
+            color: var(--ink);
+            font-family: 'Special Elite', monospace;
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            padding: 8px 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        #backBtn:hover { background: var(--ink); color: var(--paper); }
+
+        /* ── MAIN ── */
+        .page-container {
+            position: relative;
+            z-index: 1;
+            max-width: 860px;
+            margin: 0 auto;
+            padding: 36px 40px 60px;
+        }
+
+        /* section rule */
+        .archive-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 30px;
+        }
+
+        .archive-header h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 22px;
+            font-weight: 900;
+            white-space: nowrap;
+        }
+
+        .archive-header .rule { flex: 1; height: 2px; background: var(--ink); }
+        .archive-header .rule-thin { flex: 1; height: 1px; background: var(--ink); margin-top: 4px; }
+
+        /* ── JOURNAL CARD ── */
+        .journal-card {
+            display: flex;
+            gap: 0;
+            margin-bottom: 24px;
+            background: var(--paper-dark);
+            border: 1px solid var(--line);
+            border-left: 5px solid var(--ink);
+            animation: fadeIn 0.4s ease forwards;
+            opacity: 0;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .journal-content {
+            flex: 1;
+            padding: 20px 22px;
+        }
+
+        .journal-content h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--ink);
+            margin-bottom: 8px;
+            border-bottom: 1px solid var(--line);
+            padding-bottom: 6px;
+        }
+
+        .journal-content p {
+            font-family: 'IM Fell English', serif;
+            font-size: 14px;
+            color: var(--ink);
+            line-height: 1.65;
+            margin-bottom: 14px;
+        }
+
+        .ai-box {
+            background: var(--paper);
+            border: 1px solid var(--line);
+            border-left: 3px solid var(--accent);
+            padding: 10px 14px;
+        }
+
+        .ai-box p {
+            font-family: 'Special Elite', monospace;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+            color: var(--faded);
+            margin-bottom: 4px;
+        }
+
+        .ai-box p:last-child { margin-bottom: 0; }
+
+        /* ── ACTIONS ── */
+        .journal-actions {
+            display: flex;
+            flex-direction: column;
+            border-left: 1px solid var(--line);
+        }
+
+        .journal-actions button {
+            flex: 1;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid var(--line);
+            font-size: 16px;
+            cursor: pointer;
+            padding: 0 16px;
+            transition: background 0.2s;
+            color: var(--ink);
+        }
+
+        .journal-actions button:last-child { border-bottom: none; }
+
+        .journal-actions button:hover { background: var(--ink); color: var(--paper); }
+
+        /* empty state */
+        #journalListPage > p {
+            font-family: 'IM Fell English', serif;
+            font-style: italic;
+            font-size: 16px;
+            color: var(--faded);
+            text-align: center;
+            padding: 60px 0;
+        }
+
+        /* page num */
+        .page-num {
+            position: fixed;
+            bottom: 16px;
+            right: 40px;
+            font-family: 'IM Fell English', serif;
+            font-style: italic;
+            font-size: 11px;
+            color: var(--faded);
+            z-index: 5;
+        }
+
+        @media (max-width: 600px) {
+            .page-container { padding: 20px 16px 60px; }
+            body::after { display: none; }
+        }
+    </style>
 </head>
-
 <body>
 
 <header>
-    <h1>📖 Your Journals</h1>
-    <button id="backBtn">⬅ Back</button>
+    <div class="masthead-group">
+        <span class="issue-label">Archive</span>
+        <span class="logo">SENTiDeX</span>
+        <span class="sub-title">Your complete chronicle</span>
+    </div>
+    <button id="backBtn">← Back to Home</button>
 </header>
 
 <div class="page-container">
-    <div id="journalListPage" class="journal-list-page"></div>
+    <div class="archive-header">
+        <div class="rule"></div>
+        <h2>Journal Entries</h2>
+        <div class="rule"></div>
+    </div>
+    <div id="journalListPage"></div>
 </div>
 
+<span class="page-num">p. 004</span>
+
 <script>
-    // 🔐 Escape HTML
     function escapeHTML(str) {
         return str.replace(/[&<>"']/g, tag => ({
-            '&': '&amp;',
-            '<': '&lt;',
-            '>': '&gt;',
-            '"': '&quot;',
-            "'": '&#39;'
+            '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
         }[tag]));
     }
 
-    // 📥 Load Journals
-   async function loadJournalsPage() {
-    const res = await fetch("/journal");
-    if (!res.ok) return;
+    async function loadJournalsPage() {
+        const res = await fetch("/journal");
+        if (!res.ok) return;
+        const data = await res.json();
+        const container = document.getElementById("journalListPage");
 
-    const data = await res.json();
-    const container = document.getElementById("journalListPage");
+        while (container.firstChild) container.removeChild(container.firstChild);
 
-    // 🔥 HARD RESET (stronger than innerHTML)
-    while (container.firstChild) {
-        container.removeChild(container.firstChild);
+        if (!data.length) {
+            container.innerHTML = "<p>No entries yet — begin your chronicle from the home page.</p>";
+            return;
+        }
+
+        const seen = new Set();
+        [...data].reverse().forEach((journal, i) => {
+            if (seen.has(journal.id)) return;
+            seen.add(journal.id);
+
+            const div = document.createElement("div");
+            div.className = "journal-card";
+            div.id = "journal-" + journal.id;
+            div.style.animationDelay = (i * 0.06) + "s";
+
+            const contentDiv = document.createElement("div");
+            contentDiv.className = "journal-content";
+            contentDiv.innerHTML = `
+                <h3>${escapeHTML(journal.title)}</h3>
+                <p>${escapeHTML(journal.content)}</p>
+                <div class="ai-box">
+                    <p>✦ Mood: ${escapeHTML(journal.mood || "Free tier reached — try again in 24hrs.")}</p>
+                    <p>✦ Advice: ${escapeHTML(journal.aiAdvice || "Free tier reached — try again in 24hrs.")}</p>
+                </div>
+            `;
+
+            const actions = document.createElement("div");
+            actions.className = "journal-actions";
+
+            const editBtn = document.createElement("button");
+            editBtn.innerText = "✏";
+            editBtn.title = "Edit";
+            editBtn.addEventListener("click", () => editJournal(journal.id, journal.title, journal.content));
+
+            const deleteBtn = document.createElement("button");
+            deleteBtn.innerText = "✕";
+            deleteBtn.title = "Delete";
+            deleteBtn.addEventListener("click", () => deleteJournal(journal.id, div));
+
+            actions.appendChild(editBtn);
+            actions.appendChild(deleteBtn);
+            div.appendChild(contentDiv);
+            div.appendChild(actions);
+            container.appendChild(div);
+        });
     }
 
-    if (!data.length) {
-        container.innerHTML = "<p>No journals yet...</p>";
-        return;
-    }
-
-    // 🔥 ensure no duplicates using Set
-    const seen = new Set();
-
-    [...data].reverse().forEach(journal => {
-
-        // 🚫 skip duplicate IDs
-        if (seen.has(journal.id)) return;
-        seen.add(journal.id);
-
-        const div = document.createElement("div");
-        div.className = "journal-card";
-        div.id = "journal-" + journal.id; // 🔥 important
-
-        const contentDiv = document.createElement("div");
-        contentDiv.className = "journal-content";
-
-        contentDiv.innerHTML = `
-            <h3>${escapeHTML(journal.title)}</h3>
-            <p>${escapeHTML(journal.content)}</p>
-            <div class="ai-box">
-                <p>🧠 Mood: ${escapeHTML(journal.mood || "Free tier reached try after 24hr ✨🐰 refer info page")}</p>
-                <p>💡 Advice: ${escapeHTML(journal.aiAdvice || "Free tier reached try after 24hr ✨🐰 refer info page")}</p>
-            </div>
-        `;
-
-        const actions = document.createElement("div");
-        actions.className = "journal-actions";
-
-        const editBtn = document.createElement("button");
-        editBtn.innerText = "✏️";
-
-        editBtn.addEventListener("click", () => {
-            editJournal(journal.id, journal.title, journal.content);
-        });
-
-        const deleteBtn = document.createElement("button");
-        deleteBtn.innerText = "🗑️";
-
-        deleteBtn.addEventListener("click", () => {
-            deleteJournal(journal.id, div);
-        });
-
-        actions.appendChild(editBtn);
-        actions.appendChild(deleteBtn);
-
-        div.appendChild(contentDiv);
-        div.appendChild(actions);
-
-        container.appendChild(div);
-    });
-}
-
-    // 🗑️ Delete
     async function deleteJournal(id, el) {
+        if (!confirm("Remove this entry from the chronicle?")) return;
         await fetch(`/journal/DeleteByID/${id}`, { method: "DELETE" });
         el.remove();
     }
 
-    // ✏️ Safe Edit
     async function editJournal(id, oldTitle, oldContent) {
         const newTitle = prompt("Edit title:", oldTitle);
         if (newTitle === null) return;
-
-        const newContent = prompt("Edit content:", oldContent);
+        const newContent = prompt("Edit entry:", oldContent);
         if (newContent === null) return;
-
-        if (!newTitle.trim() || !newContent.trim()) {
-            alert("Fields cannot be empty");
-            return;
-        }
-
+        if (!newTitle.trim() || !newContent.trim()) { alert("Fields cannot be empty."); return; }
         await fetch(`/journal/update/${id}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ title: newTitle, content: newContent })
         });
-
         loadJournalsPage();
     }
 
-    // 🔁 Navigation
     document.getElementById("backBtn").addEventListener("click", () => {
         window.location.href = "/home";
     });
 
-    // INIT
     loadJournalsPage();
 </script>
 
 </body>
 </html>
-

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.PORC.journalApp.dto.AIResponse;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -15,10 +14,15 @@ import java.util.Map;
 
 @Service
 public class GeminiService {
+
     @Value("${gemini.api.key}")
     private String apiKey;
 
     private final WebClient webClient;
+
+    // ── MODELS ──
+    private static final String RAG_MODEL      = "gemini-3.1-flash-lite";   // 500 RPD — RAG + journal analysis
+    private static final String CHAT_MODEL     = "gemma-4-31b-it";          // 1500 RPD — AI companion chat
 
     public GeminiService(WebClient.Builder builder) {
         this.webClient = builder
@@ -26,8 +30,8 @@ public class GeminiService {
                 .build();
     }
 
-    // 🔹 CORE CALL METHOD
-    public String callGemini(String prompt) {
+    // ── CORE CALL — pass model explicitly ──
+    private String callModel(String prompt, String model) {
 
         Map<String, Object> request = Map.of(
                 "contents", List.of(
@@ -40,7 +44,7 @@ public class GeminiService {
         try {
             String rawResponse = webClient.post()
                     .uri(uriBuilder -> uriBuilder
-                            .path("/v1beta/models/gemini-2.5-flash-lite:generateContent")
+                            .path("/v1beta/models/" + model + ":generateContent")
                             .queryParam("key", apiKey)
                             .build())
                     .contentType(MediaType.APPLICATION_JSON)
@@ -50,15 +54,13 @@ public class GeminiService {
                     .onStatus(status -> status.isError(), response ->
                             response.bodyToMono(String.class)
                                     .flatMap(errorBody -> {
-                                        System.err.println("❌ GEMINI ERROR BODY: " + errorBody);
-                                        return Mono.error(new RuntimeException("Gemini API Error"));
+                                        System.err.println("❌ API ERROR [" + model + "]: " + errorBody);
+                                        return Mono.error(new RuntimeException("API Error"));
                                     })
                     )
                     .bodyToMono(String.class)
-                    .doOnNext(res -> System.out.println("✅ RAW RESPONSE: " + res))
                     .block();
 
-            // ✅ PARSE ONLY TEXT
             ObjectMapper mapper = new ObjectMapper();
             JsonNode root = mapper.readTree(rawResponse);
 
@@ -74,14 +76,25 @@ public class GeminiService {
             return cleanResponse(text);
 
         } catch (Exception e) {
-            System.err.println("❌ GEMINI EXCEPTION: " + e.getMessage());
+            System.err.println("❌ EXCEPTION [" + model + "]: " + e.getMessage());
             return "rate limit reached try after 24hr 🐰 refer to info page";
         }
     }
 
-    // 🔹 JOURNAL ANALYSIS METHOD
-    public String analyzeJournal(String content) {
+    // ── PUBLIC SHORTCUTS ──
 
+    // RAG + journal analysis → gemini-3.1-flash-lite
+    public String callGemini(String prompt) {
+        return callModel(prompt, RAG_MODEL);
+    }
+
+    // Chat companion → gemma-4-31b-it
+    public String callGemmaChat(String prompt) {
+        return callModel(prompt, CHAT_MODEL);
+    }
+
+    // ── JOURNAL ANALYSIS (RAG model) ──
+    public String analyzeJournal(String content) {
         String prompt = """
                 Analyze this journal entry and return STRICT JSON only.
                 Do NOT add extra text.
@@ -98,20 +111,9 @@ public class GeminiService {
 
         return callGemini(prompt);
     }
-    private String cleanResponse(String text) {
-        if (text == null) return "";
-
-        return text
-                .replace("```json", "")
-                .replace("```", "")
-                .trim();
-    }
-
 
     public AIResponse analyzeJournalAndParse(String content) {
-
         String response = analyzeJournal(content);
-
         try {
             ObjectMapper mapper = new ObjectMapper();
             return mapper.readValue(response, AIResponse.class);
@@ -120,33 +122,43 @@ public class GeminiService {
             return null;
         }
     }
+
+    // ── CHAT COMPANION (Gemma model) ──
     public String chatWithMemory(String message, String context) {
-
         String prompt = """
-    You are an emotionally intelligent AI companion inside a journaling app.
+                You are an emotionally intelligent AI companion.
 
-    Context about user:
-    """ + context + """
+               
+                
 
-    Current user message:
-    """ + message + """
+                
+                
 
-    Instructions:
-    - Be human, not robotic. make sure to behave as humanly and warmly as possible
-    - Keep it short (5-8 lines)
-    - Be emotionally supportive
-    - Use past context/conversation if relevant
-    """;
+                Instructions:
+                - Be human, not robotic. Be as warm as possible
+                - Keep it short (5-8 lines)
+                - Be emotionally supportive
+                - Use past context/conversation if relevant
+                """;
 
-        return callGemini(prompt);
+        return callGemmaChat(prompt);
     }
-    public String getMoodSummary(String mood, Map<String, Integer> scores) {
 
+    // ── MOOD SUMMARY (RAG model) ──
+    public String getMoodSummary(String mood, Map<String, Integer> scores) {
         String prompt = "User mood analysis:\n" +
                 "Dominant Mood: " + mood + "\n" +
                 "Scores: " + scores + "\n\n" +
                 "Give short emotional insight and advice in 2-3 lines.";
 
         return callGemini(prompt);
+    }
+
+    private String cleanResponse(String text) {
+        if (text == null) return "";
+        return text
+                .replace("```json", "")
+                .replace("```", "")
+                .trim();
     }
 }

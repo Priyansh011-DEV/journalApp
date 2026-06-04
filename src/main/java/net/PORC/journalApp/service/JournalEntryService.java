@@ -1,20 +1,24 @@
 package net.PORC.journalApp.service;
-
+import dev.langchain4j.data.embedding.Embedding;
+import dev.langchain4j.data.segment.TextSegment;
+import dev.langchain4j.model.embedding.EmbeddingModel;
+import dev.langchain4j.store.embedding.EmbeddingStore;
 import net.PORC.journalApp.Repository.JournalEntryRepo;
-import net.PORC.journalApp.dto.AIResponse;
 import net.PORC.journalApp.dto.AnalysisResult;
 import net.PORC.journalApp.entity.JournalEntry;
 import net.PORC.journalApp.entity.User;
-import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import dev.langchain4j.data.document.Metadata;
+import dev.langchain4j.store.embedding.filter.MetadataFilterBuilder;
+import dev.langchain4j.store.embedding.EmbeddingSearchRequest;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
 
 @Service
 public class JournalEntryService {
@@ -26,6 +30,12 @@ public class JournalEntryService {
     private GeminiService geminiService;
     @Autowired
     private LocalAIService localAIService;
+
+    @Autowired
+    private EmbeddingModel embeddingModel;
+
+    @Autowired
+    private EmbeddingStore<TextSegment> embeddingStore;
 
     @Transactional
     public void SaveEntry(JournalEntry journalEntry, String username) {
@@ -48,6 +58,7 @@ public class JournalEntryService {
 
         // 💾 SAVE ENTRY
         JournalEntry saved = journalEntryRepo.save(journalEntry);
+        embedAndStore(saved);
 
         // 🔗 LINK TO USER
         user.getJournalEntries().add(saved);
@@ -118,6 +129,62 @@ public class JournalEntryService {
                 .max(Map.Entry.comparingByValue())
                 .get()
                 .getKey();
+    }
+
+    private void embedAndStore(JournalEntry entry) {
+        try {
+            String text = "Date: " + entry.getDate() +
+                    "\nMood: " + entry.getMood() +
+                    "\nEntry: " + entry.getContent();
+
+            TextSegment segment = TextSegment.from(text,
+                    Metadata.from("username", entry.getUsername()));
+
+            Embedding embedding = embeddingModel.embed(segment).content();
+            embeddingStore.add(embedding, segment);
+
+            System.out.println("✅ Journal entry embedded for: " + entry.getUsername());
+        } catch (Exception e) {
+            System.err.println("❌ Embedding failed: " + e.getMessage());
+        }
+    }
+
+
+    public String askJournal(String question, String username) {
+        try {
+            System.out.println("🔵 RAG ASK - question: " + question + " user: " + username);
+
+            Embedding queryEmbedding = embeddingModel.embed(question).content();
+            System.out.println("🟢 Embedding done");
+
+            EmbeddingSearchRequest request = EmbeddingSearchRequest.builder()
+                    .queryEmbedding(queryEmbedding)
+                    .maxResults(3)
+                    .filter(MetadataFilterBuilder.metadataKey("username").isEqualTo(username))
+                    .build();
+
+            var matches = embeddingStore.search(request).matches();
+            System.out.println("🟢 Matches found: " + matches.size());
+
+            if (matches.isEmpty()) {
+                return "No relevant journal entries found.";
+            }
+
+            StringBuilder context = new StringBuilder();
+            context.append("Here are relevant journal entries:\n\n");
+            for (var match : matches) {
+                context.append(match.embedded().text()).append("\n\n");
+            }
+
+            String prompt = context + "\nBased on these journal entries, answer: " + question;
+            System.out.println("🟢 Calling Gemini...");
+            return geminiService.callGemini(prompt);
+
+        } catch (Exception e) {
+            System.err.println("❌ RAG ASK ERROR: " + e.getMessage());
+            e.printStackTrace();
+            return "Error: " + e.getMessage();
+        }
     }
 
 }

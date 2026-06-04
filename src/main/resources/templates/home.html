@@ -1,43 +1,673 @@
 <!DOCTYPE html>
-
 <html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
+    <title>SENTiDeX — Home</title>
     <link rel="icon" type="image/png" href="/images/favicon.png">
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&family=Pacifico&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/style2.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Special+Elite&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-</head>
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
+        :root {
+            --ink: #1a1008;
+            --paper: #f5f0e8;
+            --paper-dark: #ede8d8;
+            --accent: #8b2500;
+            --line: #c8b89a;
+            --faded: #7a6a50;
+            --spine: linear-gradient(to right, #8b6a3a, #c8a870, #8b6a3a);
+        }
+
+        body {
+            background: var(--paper);
+            min-height: 100vh;
+            font-family: 'Special Elite', monospace;
+            color: var(--ink);
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* paper lines */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: repeating-linear-gradient(
+                transparent, transparent 31px,
+                var(--line) 31px, var(--line) 32px
+            );
+            opacity: 0.25;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* red margin */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0; bottom: 0; left: 80px;
+            width: 2px;
+            background: rgba(180,50,50,0.25);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ── HEADER ── */
+        header {
+            position: relative;
+            z-index: 10;
+            border-bottom: 3px double var(--ink);
+            padding: 18px 40px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            background: var(--paper);
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; bottom: 0;
+            width: 8px;
+            background: var(--spine);
+        }
+
+        .masthead-group {
+            display: flex;
+            flex-direction: column;
+            padding-left: 16px;
+        }
+
+        .issue-label {
+            font-family: 'Special Elite', monospace;
+            font-size: 9px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--faded);
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 38px;
+            font-weight: 900;
+            color: var(--ink);
+            letter-spacing: -1px;
+            line-height: 1;
+        }
+
+        #welcomeText {
+            font-family: 'IM Fell English', serif;
+            font-style: italic;
+            font-size: 13px;
+            color: var(--faded);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .header-actions button,
+        .header-actions a button {
+            background: transparent;
+            border: 1.5px solid var(--ink);
+            color: var(--ink);
+            font-family: 'Special Elite', monospace;
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            padding: 7px 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .header-actions button:hover,
+        .header-actions a button:hover {
+            background: var(--ink);
+            color: var(--paper);
+        }
+
+        .header-actions button.danger {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .header-actions button.danger:hover {
+            background: var(--accent);
+            color: var(--paper);
+        }
+
+        .header-actions a { text-decoration: none; }
+
+        /* ── LAYOUT ── */
+        .container {
+            position: relative;
+            z-index: 1;
+            display: grid;
+            grid-template-columns: 280px 2fr 380px;
+            gap: 0;
+            min-height: calc(100vh - 80px);
+        }
+
+        .left, .middle, .right {
+            padding: 28px 24px;
+        }
+
+        .left   { border-right: 1px solid var(--line); }
+        .middle { border-right: 1px solid var(--line); }
+
+        /* ── CARDS ── */
+        .card {
+            margin-bottom: 24px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .card:last-child { border-bottom: none; }
+
+        .card h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--ink);
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--ink);
+        }
+
+        .card h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--ink);
+            margin-bottom: 8px;
+        }
+
+        .card p {
+            font-family: 'IM Fell English', serif;
+            font-size: 14px;
+            color: var(--faded);
+        }
+
+        .section-label {
+            font-family: 'Special Elite', monospace;
+            font-size: 9px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--faded);
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        /* ── CALENDAR ── */
+        .calendar-wrapper { position: relative; }
+
+        .flatpickr-calendar {
+            background: transparent !important;
+            box-shadow: none !important;
+            border: none !important;
+            font-family: 'Special Elite', monospace !important;
+            width: 100% !important;
+        }
+
+        .flatpickr-day.selected {
+            background: var(--ink) !important;
+            border-color: var(--ink) !important;
+        }
+
+        /* ── SMALL CARDS ── */
+        .small-card {
+            background: var(--paper-dark);
+            border: 1px solid var(--line);
+            padding: 14px 16px;
+            margin-bottom: 16px;
+            position: relative;
+        }
+
+        .small-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 3px;
+            height: 100%;
+            background: var(--ink);
+        }
+
+        #clock {
+            font-family: 'Playfair Display', serif;
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--ink);
+        }
+
+        /* ── MUSIC ── */
+        select {
+            width: 100%;
+            background: transparent;
+            border: none;
+            border-bottom: 1.5px solid var(--ink);
+            padding: 6px 0;
+            font-family: 'Special Elite', monospace;
+            font-size: 13px;
+            color: var(--ink);
+            outline: none;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+
+        select option { background: var(--paper); }
+
+        /* ── FORM ── */
+        #journalForm input,
+        #journalForm textarea {
+            width: 100%;
+            background: transparent;
+            border: none;
+            border-bottom: 1.5px solid var(--ink);
+            padding: 10px 0;
+            font-family: 'Special Elite', monospace;
+            font-size: 15px;
+            color: var(--ink);
+            outline: none;
+            margin-bottom: 18px;
+            resize: none;
+            transition: border-color 0.2s;
+        }
+
+        #journalForm input::placeholder,
+        #journalForm textarea::placeholder { color: var(--line); }
+
+        #journalForm input:focus,
+        #journalForm textarea:focus { border-bottom-color: var(--accent); }
+
+        #journalForm textarea { min-height: 120px; }
+
+        #journalForm button,
+        .view-btn,
+        #musicToggleBtn {
+            background: var(--ink);
+            color: var(--paper);
+            border: none;
+            font-family: 'Special Elite', monospace;
+            font-size: 10px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+        }
+
+        #journalForm button::before,
+        .view-btn::before,
+        #musicToggleBtn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--accent);
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+
+        #journalForm button span,
+        .view-btn span,
+        #musicToggleBtn span { position: relative; z-index: 1; }
+
+        #journalForm button:hover::before,
+        .view-btn:hover::before,
+        #musicToggleBtn:hover::before { transform: translateX(0); }
+
+        #musicToggleBtn { margin-top: 4px; font-size: 10px; }
+
+        .center { text-align: center; }
+
+        /* ── AI CHAT ── */
+        #aiButton {
+            position: fixed;
+            bottom: 28px;
+            right: 28px;
+            z-index: 100;
+            background: var(--ink);
+            color: var(--paper);
+            font-family: 'Special Elite', monospace;
+            font-size: 11px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            padding: 13px 20px;
+            cursor: pointer;
+            border: 2px solid var(--ink);
+            transition: all 0.2s;
+        }
+
+        #aiButton:hover { background: var(--accent); border-color: var(--accent); }
+
+        #aiBubble {
+            position: fixed;
+            bottom: 80px;
+            right: 28px;
+            z-index: 100;
+            background: var(--paper-dark);
+            border: 1px solid var(--line);
+            font-family: 'IM Fell English', serif;
+            font-style: italic;
+            font-size: 13px;
+            color: var(--faded);
+            padding: 8px 14px;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.4s, transform 0.4s;
+        }
+
+        #chatContainer {
+            display: none;
+            flex-direction: column;
+            position: fixed;
+            bottom: 90px;
+            right: 28px;
+            width: 320px;
+            height: 420px;
+            z-index: 100;
+            background: var(--paper);
+            border: 2px solid var(--ink);
+        }
+
+        #chatContainer::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -5px; bottom: 0;
+            width: 6px;
+            background: var(--spine);
+        }
+
+        .chat-header {
+            background: var(--ink);
+            color: var(--paper);
+            font-family: 'Playfair Display', serif;
+            font-size: 14px;
+            font-weight: 700;
+            padding: 12px 16px;
+            letter-spacing: 1px;
+            border-bottom: 2px solid var(--accent);
+        }
+
+        #chatBox {
+            flex: 1;
+            overflow-y: auto;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        #chatBox::-webkit-scrollbar { width: 4px; }
+        #chatBox::-webkit-scrollbar-thumb { background: var(--line); }
+
+        .chat-message {
+            font-family: 'IM Fell English', serif;
+            font-size: 13px;
+            line-height: 1.5;
+            padding: 8px 12px;
+            max-width: 85%;
+        }
+
+        .chat-message.user {
+            background: var(--ink);
+            color: var(--paper);
+            align-self: flex-end;
+        }
+
+        .chat-message.bot {
+            background: var(--paper-dark);
+            border-left: 3px solid var(--accent);
+            color: var(--ink);
+            align-self: flex-start;
+        }
+
+        .chat-input {
+            display: flex;
+            border-top: 1.5px solid var(--ink);
+        }
+
+        .chat-input input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            padding: 10px 12px;
+            font-family: 'Special Elite', monospace;
+            font-size: 13px;
+            color: var(--ink);
+            outline: none;
+        }
+
+        .chat-input input::placeholder { color: var(--line); }
+
+        .chat-input button {
+            background: var(--ink);
+            color: var(--paper);
+            border: none;
+            padding: 0 16px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .chat-input button:hover { background: var(--accent); }
+
+        /* ── PAGE NUM ── */
+        .page-num {
+            position: fixed;
+            bottom: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'IM Fell English', serif;
+            font-style: italic;
+            font-size: 11px;
+            color: var(--faded);
+            z-index: 5;
+        }
+
+        .anime-popup {
+            position: fixed;
+            bottom: 0;
+            left: 20px;
+            height: 160px;
+            opacity: 0.15;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* ── MEMORY BUTTON ── */
+        #memoryButton {
+            position: fixed;
+            bottom: 28px;
+            right: 190px;
+            z-index: 100;
+            background: var(--ink);
+            color: var(--paper);
+            font-family: 'Special Elite', monospace;
+            font-size: 11px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            padding: 13px 20px;
+            cursor: pointer;
+            border: 2px solid var(--ink);
+            transition: all 0.2s;
+        }
+
+        #memoryButton:hover { background: var(--accent); border-color: var(--accent); }
+
+        /* ── MEMORY CONTAINER ── */
+        #memoryContainer {
+            display: none;
+            flex-direction: column;
+            position: fixed;
+            bottom: 90px;
+            right: 190px;
+            width: 360px;
+            height: 460px;
+            z-index: 100;
+            background: var(--paper);
+            border: 2px solid var(--ink);
+            padding: 0;
+            overflow: hidden;
+        }
+
+        #memoryContainer::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -5px; bottom: 0;
+            width: 6px;
+            background: var(--spine);
+        }
+
+        .memory-header {
+            background: var(--ink);
+            color: var(--paper);
+            font-family: 'Playfair Display', serif;
+            font-size: 14px;
+            font-weight: 700;
+            padding: 12px 16px;
+            letter-spacing: 1px;
+            border-bottom: 2px solid var(--accent);
+            flex-shrink: 0;
+        }
+
+        .memory-body {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            padding: 14px;
+            gap: 10px;
+            overflow: hidden;
+        }
+
+        #memoryQuestion {
+            background: transparent;
+            border: none;
+            border-bottom: 1.5px solid var(--ink);
+            padding: 8px 0;
+            font-family: 'Special Elite', monospace;
+            font-size: 13px;
+            color: var(--ink);
+            outline: none;
+            resize: none;
+            min-height: 80px;
+            width: 100%;
+            transition: border-color 0.2s;
+        }
+
+        #memoryQuestion::placeholder { color: var(--line); }
+        #memoryQuestion:focus { border-bottom-color: var(--accent); }
+
+        #memorySearchBtn {
+            background: var(--ink);
+            color: var(--paper);
+            border: none;
+            font-family: 'Special Elite', monospace;
+            font-size: 10px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            padding: 10px 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        #memorySearchBtn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--accent);
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+
+        #memorySearchBtn span { position: relative; z-index: 1; }
+        #memorySearchBtn:hover::before { transform: translateX(0); }
+        #memorySearchBtn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        #memoryAnswer {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px 12px;
+            border: 1px solid var(--line);
+            background: var(--paper-dark);
+            font-family: 'IM Fell English', serif;
+            font-size: 13px;
+            line-height: 1.6;
+            color: var(--ink);
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        #memoryAnswer::-webkit-scrollbar { width: 4px; }
+        #memoryAnswer::-webkit-scrollbar-thumb { background: var(--line); }
+
+        #memoryAnswer.loading {
+            color: var(--faded);
+            font-style: italic;
+        }
+
+        #memoryAnswer.error {
+            color: var(--accent);
+            font-style: italic;
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 900px) {
+            .container { grid-template-columns: 1fr; }
+            .left, .middle { border-right: none; border-bottom: 1px solid var(--line); }
+            body::after { display: none; }
+        }
+    </style>
+</head>
 <body>
 
-
 <!-- AI BUTTON -->
-<div id="aiButton" onclick="toggleChat()">✨ AI Companion ✨</div>
-<div id="aiBubble">Start your AI chat 💬</div>
+<div id="aiButton" onclick="toggleChat()">✦ AI Companion</div>
+<div id="aiBubble">Your journal companion awaits…</div>
+<div id="memoryButton" onclick="toggleMemory()">✦ Memory</div>
 
 <!-- CHAT -->
 <div id="chatContainer">
-    <div class="chat-header">AI Companion</div>
+    <div class="chat-header">— AI Companion —</div>
     <div id="chatBox"></div>
-
     <div class="chat-input">
-        <input type="text" id="chatInput" placeholder="Talk to me...">
+        <input type="text" id="chatInput" placeholder="Write to me..." onkeydown="if(event.key==='Enter') sendMessage()">
         <button onclick="sendMessage()">➤</button>
     </div>
 </div>
 
-<img src="/images/walk.png" class="anime-popup" />
+<!-- MEMORY -->
+<div id="memoryContainer">
+    <div class="memory-header">— Memory Archive —</div>
+    <div class="memory-body">
+        <textarea id="memoryQuestion" placeholder="Ask about your journals… e.g. How was my mood last week?"></textarea>
+        <button id="memorySearchBtn" onclick="askMemory()"><span>Search Memory</span></button>
+        <div id="memoryAnswer">Your journal memories will appear here…</div>
+    </div>
+</div>
 
 <header>
-    <h1 id="welcomeText"> 🪶Welcome Back To Your World 🪶   📝SENTiDeX📝   </h1>
-
+    <div class="masthead-group">
+        <span class="issue-label">Daily Chronicle</span>
+        <span class="logo">SENTiDeX</span>
+        <span id="welcomeText">Your thoughts, remembered.</span>
+    </div>
     <div class="header-actions">
-        <a href="/info"><button class="info-btn">Info🪧</button></a>
+        <a href="/info"><button class="info-btn">Info</button></a>
+        <a href="/RESET1"><button>Reset Password</button></a>
         <button id="logoutBtn">Logout</button>
         <button id="deleteUserBtn" class="danger">Delete Account</button>
-        <a href="/RESET1"><button>Reset Password</button></a>
     </div>
 </header>
 
@@ -46,247 +676,226 @@
     <!-- LEFT -->
     <div class="left">
         <div class="card">
-            <h2>📊 Dashboard</h2>
+            <h2>Dashboard</h2>
+            <span class="section-label">Today's Date</span>
             <p id="todayDate"></p>
-            <div class="calendar-wrapper">
+            <div class="calendar-wrapper" style="margin-top:14px;">
                 <div id="calendar"></div>
-                <img src="/images/cnrollcalen.png" class="calendar-img" />
             </div>
         </div>
     </div>
 
     <!-- MIDDLE -->
     <div class="middle">
-
-        <div class="card small-card">
-            <h3> 🤔Mood Today ❓</h3>
-            <p id="moodText">Loading...</p>
+        <div class="card">
+            <h2>New Journal Entry</h2>
+            <form id="journalForm">
+                <input type="text" id="title" placeholder="Title of entry..." required />
+                <textarea id="content" placeholder="Write your thoughts…" required></textarea>
+                <button type="submit"><span>Commit to Paper</span></button>
+            </form>
         </div>
 
-        <div class="card small-card">
-            <h3>⏰ Time</h3>
-            <p id="clock"></p>
+        <div class="card center">
+            <h3>Your Chronicle</h3>
+            <p style="margin-bottom:16px; font-size:13px;">All your past entries, preserved.</p>
+            <button class="view-btn" id="viewJournalsBtn"><span>Open Journals →</span></button>
         </div>
-
-        <div class="card small-card">
-            <h3>🎧 Chill Music</h3>
-
-            <select id="musicSelect">
-                <option value="/music/song1.mp3">music 1</option>
-                <option value="/music/song2.mp3">music 2</option>
-                <option value="/music/song3.mp3">music 3</option>
-                <option value="/music/song4.mp3">music 4</option>
-                <option value="/music/song5.mp3">music 5</option>
-                <option value="/music/song6.mp3">music 6</option>
-                <option value="/music/song7.mp3">music 7</option>
-            </select>
-
-            <button id="musicToggleBtn">Play / Pause</button>
-            <audio id="audioPlayer" loop></audio>
-        </div>
-
     </div>
 
     <!-- RIGHT -->
     <div class="right">
 
-        <div class="card">
-            <h2>Create Journal Entry</h2>
-
-            <form id="journalForm">
-                <input type="text" id="title" placeholder="Title" required />
-                <textarea id="content" placeholder="Write something..." required></textarea>
-                <button type="submit">Save Journal</button>
-            </form>
+        <div class="small-card card">
+            <h3>Mood Today</h3>
+            <p id="moodText" style="font-size:15px; margin-top:4px;">Loading…</p>
         </div>
 
-        <div class="card center">
-            <h3>📚 Your Journals</h3>
-            <button id="viewJournalsBtn" class="view-btn">
-                View All Journals →
-            </button>
+        <div class="small-card card">
+            <h3>Current Time</h3>
+            <p id="clock"></p>
         </div>
 
+        <div class="small-card card">
+            <h3>Chill Music</h3>
+            <select id="musicSelect">
+                <option value="/music/song1.mp3">Track I</option>
+                <option value="/music/song2.mp3">Track II</option>
+                <option value="/music/song3.mp3">Track III</option>
+                <option value="/music/song4.mp3">Track IV</option>
+                <option value="/music/song5.mp3">Track V</option>
+                <option value="/music/song6.mp3">Track VI</option>
+                <option value="/music/song7.mp3">Track VII</option>
+            </select>
+            <button id="musicToggleBtn"><span>Play / Pause</span></button>
+            <audio id="audioPlayer" loop></audio>
+        </div>
     </div>
 
 </div>
 
+<span class="page-num">p. 003</span>
+
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-
 <script>
-
-function handleRateLimit(res) {
-    if (res.status === 429) {
-        alert("Too many actions 😅 Slow down!");
-        return true;
+    function handleRateLimit(res) {
+        if (res.status === 429) { alert("Too many actions — slow down."); return true; }
+        return false;
     }
-    return false;
-}
 
-flatpickr("#calendar", { inline: true, defaultDate: "today" });
+    flatpickr("#calendar", { inline: true, defaultDate: "today" });
+    document.getElementById("todayDate").innerText = new Date().toDateString();
 
-document.getElementById("todayDate").innerText =
-    "Today: " + new Date().toDateString();
+    setInterval(() => {
+        document.getElementById("clock").innerText = new Date().toLocaleTimeString();
+    }, 1000);
 
-setInterval(() => {
-    document.getElementById("clock").innerText =
-        new Date().toLocaleTimeString();
-}, 1000);
+    const player = document.getElementById("audioPlayer");
+    const select = document.getElementById("musicSelect");
 
-// 🔥 MUSIC FIX START
-const player = document.getElementById("audioPlayer");
-const select = document.getElementById("musicSelect");
-
-// preload song (no autoplay)
-window.addEventListener("DOMContentLoaded", () => {
-    player.src = select.value;
-    player.load();
-});
-
-document.getElementById("musicSelect").onchange = e => {
-    player.src = e.target.value;
-    player.load();
-    player.play();
-};
-
-document.getElementById("musicToggleBtn").onclick = () => {
-    if (player.paused) {
-        player.play().catch(() => {
-            console.log("Play blocked until user interaction");
-        });
-    } else {
-        player.pause();
-    }
-};
-// 🔥 MUSIC FIX END
-
-async function loadMood() {
-    try {
-        const res = await fetch("/JUournal/mood");
-        document.getElementById("moodText").innerText = await res.text();
-    } catch {
-        document.getElementById("moodText").innerText = "normal";
-    }
-}
-
-document.getElementById("journalForm").addEventListener("submit", async e => {
-    e.preventDefault();
-
-    const titleInput = document.getElementById("title");
-    const contentInput = document.getElementById("content");
-
-    const res = await fetch("/journal", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({
-            title: titleInput.value,
-            content: contentInput.value
-        })
+    window.addEventListener("DOMContentLoaded", () => {
+        player.src = select.value;
+        player.load();
     });
 
-    if (handleRateLimit(res)) return;
+    select.onchange = e => { player.src = e.target.value; player.load(); player.play(); };
 
-    if (res.ok) {
-        titleInput.value = "";
-        contentInput.value = "";
-        loadMood();
-        alert("Journal added ✨");
-    } else {
-        alert("Error saving journal ❌");
+    document.getElementById("musicToggleBtn").onclick = () => {
+        if (player.paused) { player.play().catch(() => {}); } else { player.pause(); }
+    };
+
+    async function loadMood() {
+        try {
+            const res = await fetch("/JUournal/mood", { credentials: "include" });
+            document.getElementById("moodText").innerText = await res.text();
+        } catch { document.getElementById("moodText").innerText = "—"; }
     }
-});
 
-document.getElementById("viewJournalsBtn").onclick = () => location.href = "/journals";
-document.getElementById("logoutBtn").onclick = () => location.href = "/logout";
-
-document.getElementById("deleteUserBtn").onclick = async () => {
-    if (!confirm("Are you sure?")) return;
-    await fetch("/Webuser", { method: "DELETE" });
-    location.href = "/login";
-};
-
-function toggleChat() {
-    const container = document.getElementById("chatContainer");
-    container.style.display =
-        container.style.display === "flex" ? "none" : "flex";
-
-    const chatBox = document.getElementById("chatBox");
-    chatBox.innerHTML = "";
-
-    addMessage(`Welcome back, ${localStorage.getItem("username") || "Traveller"} 👋`, "bot");
-}
-
-async function sendMessage() {
-    const chatInput = document.getElementById("chatInput");
-    const msg = chatInput.value.trim();
-    if (!msg) return;
-
-    addMessage(msg, "user");
-    const typing = addMessage("...", "bot");
-
-    try {
-        const res = await fetch("/api/chat", {
+    document.getElementById("journalForm").addEventListener("submit", async e => {
+        e.preventDefault();
+        const titleInput = document.getElementById("title");
+        const contentInput = document.getElementById("content");
+        const res = await fetch("/journal", {
             method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({
-                message: msg,
-                username: localStorage.getItem("username")
-            })
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({ title: titleInput.value, content: contentInput.value })
         });
+        if (handleRateLimit(res)) return;
+        if (res.ok) { titleInput.value = ""; contentInput.value = ""; loadMood(); alert("Entry saved ✦"); }
+        else { alert("Error saving entry."); }
+    });
 
-        if (handleRateLimit(res)) {
-            typing.innerText = "Slow down 😅";
+    document.getElementById("viewJournalsBtn").onclick = () => location.href = "/journals";
+    document.getElementById("logoutBtn").onclick   = () => location.href = "/logout";
+    document.getElementById("deleteUserBtn").onclick = async () => {
+        if (!confirm("Delete account permanently?")) return;
+        await fetch("/Webuser", { method: "DELETE", credentials: "include" });
+        location.href = "/login";
+    };
+
+    // ── AI CHAT ──
+    function toggleChat() {
+        const container = document.getElementById("chatContainer");
+        container.style.display = container.style.display === "flex" ? "none" : "flex";
+        const chatBox = document.getElementById("chatBox");
+        chatBox.innerHTML = "";
+        addMessage(`Welcome back, ${localStorage.getItem("username") || "Traveller"}.`, "bot");
+    }
+
+    async function sendMessage() {
+        const chatInput = document.getElementById("chatInput");
+        const msg = chatInput.value.trim();
+        if (!msg) return;
+        addMessage(msg, "user");
+        chatInput.value = "";
+        const typing = addMessage("…", "bot");
+        try {
+            const res = await fetch("/api/chat", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",
+                body: JSON.stringify({ message: msg, username: localStorage.getItem("username") })
+            });
+            if (handleRateLimit(res)) { typing.innerText = "Slow down…"; return; }
+            typing.innerText = await res.text();
+        } catch { typing.innerText = "Server error."; }
+    }
+
+    function addMessage(text, sender) {
+        const chatBox = document.getElementById("chatBox");
+        const m = document.createElement("div");
+        m.className = "chat-message " + sender;
+        m.innerText = text;
+        chatBox.appendChild(m);
+        chatBox.scrollTop = chatBox.scrollHeight;
+        return m;
+    }
+
+    // ── MEMORY (RAG /apiv2/ask) ──
+    function toggleMemory() {
+        const c = document.getElementById("memoryContainer");
+        c.style.display = c.style.display === "flex" ? "none" : "flex";
+    }
+
+    async function askMemory() {
+        const q = document.getElementById("memoryQuestion").value.trim();
+        const answerEl = document.getElementById("memoryAnswer");
+        const btn = document.getElementById("memorySearchBtn");
+
+        if (!q) {
+            answerEl.className = "error";
+            answerEl.innerText = "Please enter a question first.";
             return;
         }
 
-        typing.innerText = await res.text();
-    } catch {
-        typing.innerText = "Server error ❌";
+        // loading state
+        btn.disabled = true;
+        answerEl.className = "loading";
+        answerEl.innerText = "Searching your memories…";
+
+        try {
+            const res = await fetch("/apiv2/ask", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",          // sends session cookie — required for Principal
+                body: JSON.stringify(q)          // @RequestBody String expects a JSON string
+            });
+
+            if (res.status === 401) {
+                answerEl.className = "error";
+                answerEl.innerText = "Session expired. Please log in again.";
+                return;
+            }
+
+            if (!res.ok) {
+                answerEl.className = "error";
+                answerEl.innerText = "Server error (" + res.status + "). Check logs.";
+                return;
+            }
+
+            const answer = await res.text();
+            answerEl.className = "";
+            answerEl.innerText = answer || "No answer returned.";
+
+        } catch (e) {
+            answerEl.className = "error";
+            answerEl.innerText = "Could not reach the server.";
+        } finally {
+            btn.disabled = false;
+        }
     }
 
-    chatInput.value = "";
-}
-
-function addMessage(text, sender) {
-    const chatBox = document.getElementById("chatBox");
-
-    const m = document.createElement("div");
-    m.className = "chat-message " + sender;
-    m.innerText = text;
-
-    chatBox.appendChild(m);
-    chatBox.scrollTop = chatBox.scrollHeight;
-
-    return m;
-}
-
-window.onload = () => {
-    const stored = localStorage.getItem("username");
-    const username = (stored && stored !== "null") ? stored : "To Your World 🪶   📝SENTiDeX📝    ";
-
-    document.getElementById("welcomeText").innerText =
-        `🪶 Welcome Back, ${username} `;
-
-    loadMood();
-
-    const bubble = document.getElementById("aiBubble");
-
-    // show bubble
-    setTimeout(() => {
-        bubble.style.opacity = "1";
-        bubble.style.transform = "translateY(0)";
-    }, 500);
-
-    // hide bubble
-    setTimeout(() => {
-        bubble.style.opacity = "0";
-        bubble.style.transform = "translateY(10px)";
-    }, 4000);
-};
-
-
-
+    window.onload = () => {
+        const stored = localStorage.getItem("username");
+        const username = (stored && stored !== "null") ? stored : null;
+        document.getElementById("welcomeText").innerText =
+            username ? `Your thoughts, ${username}.` : "Your thoughts, remembered.";
+        loadMood();
+        const bubble = document.getElementById("aiBubble");
+        setTimeout(() => { bubble.style.opacity = "1"; bubble.style.transform = "translateY(0)"; }, 500);
+        setTimeout(() => { bubble.style.opacity = "0"; bubble.style.transform = "translateY(10px)"; }, 4000);
+    };
 </script>
-
 </body>
 </html>

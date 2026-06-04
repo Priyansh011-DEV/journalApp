@@ -1,24 +1,47 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Reset Password</title>
+    <title>SENTiDeX — Password Recovery</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Special+Elite&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
+<style>
+body{background:#f5f0e8;font-family:'Special Elite',monospace;max-width:900px;margin:auto;padding:40px;position:relative}
+body:before{content:'';position:fixed;inset:0;background-image:repeating-linear-gradient(transparent,transparent 31px,#c8b89a 31px,#c8b89a 32px);opacity:.3;pointer-events:none}
+body:after{content:'';position:fixed;left:80px;top:0;bottom:0;width:2px;background:rgba(180,50,50,.3)}
+.reset-container{position:relative;padding:40px}
+.reset-container:before{content:'';position:absolute;left:-4px;top:0;bottom:0;width:8px;background:linear-gradient(to right,#8b6a3a,#c8a870,#8b6a3a)}
+.masthead{text-align:center;margin-bottom:30px}.logo{font-family:'Playfair Display',serif;font-size:52px;font-weight:900}.tagline{font-family:'IM Fell English',serif;font-style:italic;color:#7a6a50}
+.paper-label{font-size:10px;letter-spacing:4px;color:#7a6a50;text-transform:uppercase}
+.reset-card{margin:25px 0;padding-bottom:20px;border-bottom:1px solid #c8b89a}
+.reset-card h3{font-family:'Playfair Display',serif}
+input{width:100%;padding:12px 0;background:transparent;border:none;border-bottom:2px solid #1a1008;margin:10px 0}
+button{width:100%;padding:14px;background:#1a1008;color:#f5f0e8;border:none;cursor:pointer}
+.back-btn a{text-decoration:none;color:#7a6a50}
+.page-num{position:fixed;bottom:20px;right:40px;font-family:'IM Fell English',serif}
+.stamp{position:absolute;top:20px;right:20px;border:2px solid #8b2500;padding:10px;transform:rotate(8deg);opacity:.4}
+</style>
 
     <!-- FONTS -->
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&family=Pacifico&display=swap" rel="stylesheet">
 
     <!-- CSS -->
-    <link rel="stylesheet" href="/css/style3.css">
+
 </head>
 
 <body>
 
-<img src="/images/BUNNYSKT.png" class="anime-popup" />
+
 
 <div class="reset-container">
+<div class="stamp">PASSWORD<br>RECOVERY<br>PAGE</div>
+<div class="masthead">
+<span class="paper-label">Personal Record</span><br>
+<span class="logo">SENTiDeX</span><br>
+<span class="tagline">Your thoughts, remembered.</span>
+</div>
 
     <!-- 🔙 BACK BUTTON -->
     <div class="back-btn">
-        <a href="/home">← Back to Login ⚙️⚙</a>
+        <a href="/home">← Back to Login</a>
     </div>
 
     <!-- STEP 1 -->
@@ -60,7 +83,7 @@
         const email = document.getElementById("email").value;
 
         if (!username || !email) {
-            alert("⚠️ Enter username and email");
+            alert("Enter username and email");
             return;
         }
 
@@ -75,7 +98,7 @@
         const token = await res.text();
 
         if (res.ok) {
-            alert("🔐 Your reset token:\n\n" + token + "\n\n(Copy this. Valid for 10 minutes)");
+            alert("Your reset token:\n\n" + token + "\n\n(Copy this. Valid for 10 minutes)");
         } else {
             alert(token);
         }
@@ -87,7 +110,7 @@
         const password = document.getElementById("newPassword").value;
 
         if (!token || !password) {
-            alert("⚠️ Please fill all fields");
+            alert("Please fill all fields");
             return;
         }
 
@@ -102,7 +125,7 @@
         const text = await res.text();
 
         if (res.ok) {
-            alert("🔥 Password reset successful!");
+            alert("Password reset successful!");
             window.location.href = "/login"; // redirect after success
         } else {
             alert(text);
@@ -115,5 +138,5 @@
     <p>For queries: support.inc.japp@gmail.com</p>
 </footer>
 
-</body>
+<div class="page-num">p. 003</div></body>
 </html>

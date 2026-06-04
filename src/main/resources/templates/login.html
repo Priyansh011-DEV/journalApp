@@ -1,66 +1,351 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Login to SENTiDeX </title>
+    <title>SENTiDeX — Login</title>
     <link rel="icon" type="image/png" href="/images/favicon.png">
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&family=Pacifico&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/style1.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Special+Elite&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --ink: #1a1008;
+            --paper: #f5f0e8;
+            --paper-dark: #ede8d8;
+            --accent: #8b2500;
+            --line: #c8b89a;
+            --faded: #7a6a50;
+        }
+
+        body {
+            background: var(--paper);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Special Elite', monospace;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* paper texture lines */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: repeating-linear-gradient(
+                transparent,
+                transparent 31px,
+                var(--line) 31px,
+                var(--line) 32px
+            );
+            opacity: 0.35;
+            pointer-events: none;
+        }
+
+        /* red margin line */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0; bottom: 0;
+            left: 80px;
+            width: 2px;
+            background: rgba(180, 50, 50, 0.3);
+            pointer-events: none;
+        }
+
+        .page {
+            position: relative;
+            width: 480px;
+            padding: 60px 55px 50px;
+            animation: pageOpen 0.9s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+            transform-origin: left center;
+        }
+
+        @keyframes pageOpen {
+            from { opacity: 0; transform: perspective(1200px) rotateY(-25deg) translateX(-40px); }
+            to   { opacity: 1; transform: perspective(1200px) rotateY(0deg) translateX(0); }
+        }
+
+        /* binding shadow */
+        .page::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -4px; bottom: 0;
+            width: 8px;
+            background: linear-gradient(to right, #8b6a3a, #c8a870, #8b6a3a);
+            border-radius: 2px 0 0 2px;
+        }
+
+        .masthead {
+            text-align: center;
+            margin-bottom: 42px;
+            position: relative;
+        }
+
+        .masthead::after {
+            content: '';
+            display: block;
+            width: 100%;
+            height: 2px;
+            background: var(--ink);
+            margin-top: 16px;
+        }
+
+        .masthead::before {
+            content: '';
+            display: block;
+            width: 100%;
+            height: 1px;
+            background: var(--ink);
+            margin-bottom: 14px;
+        }
+
+        .paper-label {
+            font-family: 'Special Elite', monospace;
+            font-size: 10px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--faded);
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 52px;
+            font-weight: 900;
+            color: var(--ink);
+            letter-spacing: -1px;
+            line-height: 1;
+            display: block;
+        }
+
+        .tagline {
+            font-family: 'IM Fell English', serif;
+            font-style: italic;
+            font-size: 13px;
+            color: var(--faded);
+            margin-top: 6px;
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 28px;
+            position: relative;
+        }
+
+        .form-label {
+            display: block;
+            font-family: 'Special Elite', monospace;
+            font-size: 10px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--faded);
+            margin-bottom: 8px;
+        }
+
+        .form-input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid var(--ink);
+            padding: 10px 0;
+            font-family: 'Special Elite', monospace;
+            font-size: 18px;
+            color: var(--ink);
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .form-input::placeholder {
+            color: var(--line);
+        }
+
+        .form-input:focus {
+            border-bottom-color: var(--accent);
+        }
+
+        /* typewriter cursor on focus */
+        .form-input:focus::after {
+            content: '|';
+            animation: blink 1s step-end infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 16px;
+            background: var(--ink);
+            color: var(--paper);
+            border: none;
+            font-family: 'Special Elite', monospace;
+            font-size: 13px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-submit::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--accent);
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+
+        .btn-submit span { position: relative; z-index: 1; }
+
+        .btn-submit:hover::before { transform: translateX(0); }
+        .btn-submit:hover { letter-spacing: 6px; }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 28px 0;
+        }
+
+        .divider-line { flex: 1; height: 1px; background: var(--line); }
+
+        .divider-text {
+            font-family: 'IM Fell English', serif;
+            font-style: italic;
+            font-size: 12px;
+            color: var(--faded);
+        }
+
+        .links {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 6px;
+        }
+
+        .links a {
+            font-family: 'Special Elite', monospace;
+            font-size: 11px;
+            letter-spacing: 1px;
+            color: var(--faded);
+            text-decoration: none;
+            border-bottom: 1px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .links a:hover {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+
+        .error-msg {
+            font-family: 'Special Elite', monospace;
+            font-size: 12px;
+            color: var(--accent);
+            margin-top: 16px;
+            text-align: center;
+            letter-spacing: 1px;
+        }
+
+        .success-msg {
+            font-family: 'Special Elite', monospace;
+            font-size: 12px;
+            color: #2a6a2a;
+            margin-top: 16px;
+            text-align: center;
+            letter-spacing: 1px;
+        }
+
+        /* page number */
+        .page-num {
+            position: absolute;
+            bottom: 20px;
+            right: 55px;
+            font-family: 'IM Fell English', serif;
+            font-style: italic;
+            font-size: 11px;
+            color: var(--faded);
+        }
+
+        /* stamp decoration */
+        .stamp {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border: 2px solid var(--accent);
+            border-radius: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform: rotate(8deg);
+            opacity: 0.4;
+        }
+
+        .stamp span {
+            font-family: 'Special Elite', monospace;
+            font-size: 7px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--accent);
+            text-align: center;
+            line-height: 1.4;
+        }
+
+        @media (max-width: 520px) {
+            .page { width: 100%; padding: 50px 30px 40px; }
+            .stamp { display: none; }
+        }
+    </style>
 </head>
 <body>
-<img src="/images/Ballon.png" class="anime-popup" />
 
-<header>
-    Welcome Back 🐰 to SENTiDeX
-</header>
+<div class="page">
+    <div class="stamp"><span>PRIVATE<br>JOURNAL<br>ENTRY</span></div>
 
-<div class="container">
-
-    <div class="card">
-        <h2>Login 🔗</h2>
-
-        <form action="/login" method="post">
-
-            <!-- USERNAME -->
-            <div class="input-group">
-                <input type="text" name="username" required>
-                <label>Username</label>
-            </div>
-
-            <!-- PASSWORD -->
-            <div class="input-group">
-                <input type="password" name="password" required>
-                <label>Password</label>
-            </div>
-
-            <button type="submit">Login</button>
-
-        </form>
-
-        <br>
-
-        <!-- LINKS -->
-        <div style="text-align:center;">
-            <a href="/RESET1">Forgot Password?</a>
-            <br><br>
-            <a href="/register">Create Account</a>
-        </div>
-
-        <!-- ERROR MESSAGES -->
-        <p th:if="${param.error}" style="color:red; text-align:center; margin-top:10px;">
-            Invalid credentials ❌
-        </p>
-
-        <p th:if="${param.logout}" style="color:lightgreen; text-align:center; margin-top:10px;">
-            Logged out successfully ✅
-        </p>
-
+    <div class="masthead">
+        <span class="paper-label">Personal Record</span>
+        <span class="logo">SENTiDeX</span>
+        <span class="tagline">Your thoughts, remembered.</span>
     </div>
 
-</div>
+    <form action="/login" method="post">
+        <div class="form-group">
+            <label class="form-label" for="username">Username</label>
+            <input class="form-input" type="text" id="username" name="username" placeholder="write here..." required>
+        </div>
 
-<footer>
-    <p>Secure Login • Journal App</p>
-</footer>
+        <div class="form-group">
+            <label class="form-label" for="password">Password</label>
+            <input class="form-input" type="password" id="password" name="password" placeholder="••••••••" required>
+        </div>
+
+        <button class="btn-submit" type="submit"><span>Open Journal</span></button>
+    </form>
+
+    <div class="divider">
+        <div class="divider-line"></div>
+        <span class="divider-text">or</span>
+        <div class="divider-line"></div>
+    </div>
+
+    <div class="links">
+        <a href="/RESET1">Forgot password?</a>
+        <a href="/register">New entry →</a>
+    </div>
+
+    <p th:if="${param.error}" class="error-msg">✕ Invalid credentials</p>
+    <p th:if="${param.logout}" class="success-msg">✓ Logged out successfully</p>
+
+    <span class="page-num">p. 001</span>
+</div>
 
 </body>
 </html>
