@@ -6,8 +6,7 @@ A modern, full-stack journaling application with **secure multi-user support**, 
 
 ## 🚀 Live Demo
 
-🔗 Swagger UI: https://journalapp-ma29.onrender.com/swagger-ui/index.html
-🔗 Frontend: (Add your Render link here)
+ https://journalapp-ma29.onrender.com/login
 
 ---
 
