@@ -42,7 +42,7 @@ public class RagConfigProd {
                 .database("neondb")
                 .user(dbUser)
                 .password(dbPassword)
-                .table("document_chunks_prod")
+                .table("document_chunks")
                 .dimension(768)
                 .createTable(true)
                 .build();
