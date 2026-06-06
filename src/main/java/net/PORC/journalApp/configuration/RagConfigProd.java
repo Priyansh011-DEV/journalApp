@@ -2,21 +2,21 @@ package net.PORC.journalApp.configuration;
 
 import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.model.embedding.EmbeddingModel;
-import dev.langchain4j.model.huggingface.HuggingFaceEmbeddingModel;
 import dev.langchain4j.store.embedding.EmbeddingStore;
 import dev.langchain4j.store.embedding.pgvector.PgVectorEmbeddingStore;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import dev.langchain4j.model.nomic.NomicEmbeddingModel;
 
 @Configuration
 @Profile("prod")
 public class RagConfigProd {
 
 
-    @Value("${huggingface.api.token}")
-    private String hfToken;
+    @Value("${nomic.api.key}")
+    private String NomicApiKey;
 
 
 
@@ -28,10 +28,9 @@ public class RagConfigProd {
 
     @Bean
     public EmbeddingModel embeddingModel() {
-        return HuggingFaceEmbeddingModel.builder()
-                .accessToken(hfToken)
-                .modelId("sentence-transformers/all-MiniLM-L6-v2")
-                .waitForModel(true)
+        return NomicEmbeddingModel.builder()
+                .apiKey(NomicApiKey)
+                .modelName("nomic-embed-text-v1.5")
                 .build();
     }
 
@@ -44,7 +43,7 @@ public class RagConfigProd {
                 .user(dbUser)
                 .password(dbPassword)
                 .table("document_chunks_prod")
-                .dimension(384)
+                .dimension(768)
                 .createTable(true)
                 .build();
     }

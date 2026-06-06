@@ -31,6 +31,6 @@ gemini:
   api:
     key: ${GEMINI_API_KEY}
 
-huggingface:
+nomic:
   api:
-    token: ${HUGGINGFACE_TOKEN}
+    key: ${NOMIC_API_KEY}
